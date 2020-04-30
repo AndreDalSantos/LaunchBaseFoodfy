@@ -1,0 +1,37 @@
+<script>
+var dirlen = {{recipe.directions.length}}-1
+var stepCounter = 1 + dirlen
+
+function addStep() {
+    const steps = document.querySelector("#steps");
+    const fieldContainer2 = document.querySelectorAll(".step");
+    
+    // Realiza um clone do último step adicionado
+    const newField2 = fieldContainer2[fieldContainer2.length - 1].cloneNode(true);
+    
+    
+    // Não adiciona um novo input se o último tem um valor vazio
+    if (newField2.children[0].value == "") return false;
+    
+    // Deixa o valor do input vazio
+    newField2.children[0].value = "";
+
+    // Atualiza o contador e insere na nova ID
+    stepCounter = stepCounter + 1;
+    newField2.children[1].id = `id${stepCounter}`;
+
+    steps.appendChild(newField2);
+}
+
+function removeDiv(id) {
+
+    // verifica se possui apenas uma linha para não excluir e ficar sem nada
+    if (stepCounter == 1) return false;
+
+    // Caso contador seja >1 executa o comando de remoção abaixo
+    const stepRemove = document.getElementById(id)
+    stepRemove.closest('div').remove();
+    stepCounter = stepCounter - 1
+    
+}
+</script>

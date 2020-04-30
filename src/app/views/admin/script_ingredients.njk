@@ -1,0 +1,37 @@
+<script>
+var inglen = {{recipe.ingredients.length}}-1
+var ingrCounter = 1 + inglen
+
+function addIngredient() {
+    const ingredients = document.querySelector("#ingredients");
+    const fieldContainer = document.querySelectorAll(".ingredient");
+    
+    // Realiza um clone do último ingredient adicionado
+    const newField = fieldContainer[fieldContainer.length - 1].cloneNode(true);
+    
+    
+    // Não adiciona um novo input se o último tem um valor vazio
+    if (newField.children[0].value == "") return false;
+    
+    // Deixa o valor do input vazio
+    newField.children[0].value = "";
+
+    // Atualiza o contador e insere na nova ID
+    ingrCounter = ingrCounter + 1;
+    newField.children[1].id = `idi${ingrCounter}`;
+
+    ingredients.appendChild(newField);
+}
+
+function removeDiv1(id) {
+
+    // verifica se possui apenas uma linha para não excluir e ficar sem nada
+    if (ingrCounter == 1) return false;
+
+    // Caso contador seja >1 executa o comando de remoção abaixo
+    const ingrRemove = document.getElementById(id)
+    ingrRemove.closest('div').remove();
+    ingrCounter = ingrCounter - 1
+    
+}
+</script>

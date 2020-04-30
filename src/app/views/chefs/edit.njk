@@ -1,0 +1,65 @@
+{% extends "chefs/layout2.njk" %}
+
+{% block content %}
+
+    <div class="card-edit-chef">
+        <section class="details">
+        
+            <div class="edit-header">
+                <h3>Editar Chef</h3>
+            
+                <form id="form-delete" action="/chefs?_method=DELETE" method="post">
+                    <input type="hidden" name="id" value={{chef.id}}>
+                    <button id="delete-button" type="submit">Deletar</button>
+                </form>
+
+                <button id="save-button" form="putForm" type="submit">Salvar</button>
+
+            </div>
+
+
+            <form id="putForm" method="POST" action="/chefs?_method=PUT">
+
+                {% include 'chefs/fields.njk' %}
+
+                <input type="hidden" name="id" value={{chef.id}}>
+
+            </form>
+
+            
+
+        </section>
+
+        <input type="hidden" name="total_recipes" id="total_recipes" value={{chef.total_recipes}}>
+
+        {# <div>
+            <p>Receitas: {{chef.total_recipes}}</p>
+        </div> #}
+
+    </div>
+
+    <script>
+        const totalRecipes = document.getElementById('total_recipes').value
+        const formDelete = document.querySelector('#form-delete')
+
+        formDelete.addEventListener("submit", function (event) {
+
+            if(totalRecipes > 0) {
+                alert(`Total Receitas: ${totalRecipes} -> Não pode deletar chef que possui receitas!!`)
+                event.preventDefault()
+            } else {
+
+                const confirmation = confirm("Deseja deletar?")
+
+                if (!confirmation) {
+                    event.preventDefault()
+                }
+                
+            }
+
+        })
+
+        
+    </script>
+
+{% endblock content %}

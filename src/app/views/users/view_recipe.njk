@@ -1,0 +1,58 @@
+{% extends "layout.njk" %}
+
+{% block head %}
+    <title>Foodfy -
+        {{recipeClicked.title}}</title>
+{% endblock %}
+
+{% block content %}
+    <section class="recipeView">
+        <div class="image-view-container">
+            <img src="{{recipeClicked.image}}" alt="imagem de {{recipeClicked.title}}">
+        </div>
+
+        <div class="view-title">{{recipeClicked.title}}</div>
+
+        <div class="view-author">        
+            {% for chef in chefs %}
+                {% if chef.id == recipeClicked.chef_id%}
+                    por {{chef.name}}
+                {% endif %}
+            {% endfor %}        
+        </div>
+
+        <div class="sub-title st1">
+            <div class="sub-title_0">Ingredientes</div>
+            <div class="sub-title_1" id="ingredientId">Mostrar</div>     
+        </div>
+
+        <div class="ingredients-block">
+            {% for ingredient in recipeClicked.ingredients %}
+                <li>{{ingredient}}</li>
+            {% endfor %}
+        </div>
+
+        <div class="sub-title st2">
+            <div class="sub-title_0">Modo de preparo</div>
+            <div class="sub-title_1" id="prepareId">Mostrar</div>     
+        </div>
+
+        <div class="prepare-block">
+            {% for item in recipeClicked.preparation %}
+                <li>{{item}}</li>
+            {% endfor %}
+        </div>
+
+        <div class="sub-title st3">
+            <div class="sub-title_0">Informações adicionais</div>
+            <div class="sub-title_1" id="infoId">Mostrar</div>     
+        </div>
+
+        <div class="information-block">{{recipeClicked.information}}</div>
+
+    </section>
+
+    {# <footer class="rodape">Todos os direitos reservados</footer> #}
+
+    <script src="/scripts.js"></script>
+{% endblock %}

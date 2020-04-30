@@ -1,0 +1,26 @@
+{% extends "chefs/layout2.njk" %}
+
+{% block head %}
+    <title>Cadastrar Chef</title>
+{% endblock head %}
+
+{% block content %}
+
+    <form action="/chefs" method="post">
+        <div class="header-create">
+            <div>
+                <h1>Cadastar Chef</h1>
+            </div>
+
+            <div>
+                <button class="create-button" type="submit">Salvar</button>
+            </div>
+        </div>
+
+        {% include 'chefs/fields.njk' %}
+
+    </form>
+
+    {# <script src="/scripts_admin.js"></script> #}
+
+{% endblock content %}

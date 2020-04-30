@@ -1,0 +1,107 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+
+    <div id="bl1">
+        <div>
+            <p>As melhores receitas</p>
+            <p>Aprenda a construir os melhores pratos com receitas criadas por profissionais do mundo inteiro.</p>
+        </div>
+
+        <div>
+            <img src="imagens/chef.png" alt="">
+        </div>
+    </div>
+
+    <p>Mais acessadas</p>
+
+    <section class="cards">
+
+        {% for item in recipes %}
+            <div class="card" id="{{item.id}}">
+                <div class="card_image-container">
+                    <img src="{{item.image}}" alt="imagem de {{item.title}}">
+                </div>
+                <div class="card_content">
+                    <p>{{item.title}}</p>
+                </div>
+                <div class="card_info">
+                    {% for chef in chefs %}
+                        {% if chef.id == item.chef_id%}
+                            <p>por {{chef.name}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+    </section>
+    <div 
+        class="pagination" 
+        data-page={{pagination.page}} 
+        data-total={{pagination.total}} 
+        data-filter={{filter}}
+    ></div>
+    {# <footer class="rodape">Todos os direitos reservados</footer> #}
+
+    <script src="/scripts.js"></script>
+    <script>
+        function paginate(selectedPage, totalPages) {
+            let pages = [],
+                oldPage
+
+            for (let currentPage = 1; currentPage <= totalPages; currentPage++) {
+
+                const firstAndLastPage = currentPage == 1 || currentPage == totalPages
+                const pagesAfterSelectedPage = currentPage <= selectedPage + 2
+                const pagesBeforeSelectedPage = currentPage >= selectedPage - 2
+
+                if (firstAndLastPage || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
+
+                    if (oldPage && currentPage - oldPage > 2) {
+                        pages.push("...")
+                    }
+
+                    if (oldPage && currentPage - oldPage == 2) {
+                        pages.push(oldPage + 1)
+                    }
+
+                    pages.push(currentPage)
+                    oldPage = currentPage
+                }
+            }
+
+            return pages
+        }
+
+        function createPagination(pagination) {
+            const filter = pagination.dataset.filter
+            const page = + pagination.dataset.page
+            const total = + pagination.dataset.total
+            const pages = paginate(page, total)
+
+            let elements = ""
+
+            for (let page of pages) {
+                if (String(page).includes('...')) {
+                    elements += `<span>${page}</span>`
+                } else {
+                    if (filter) {
+                        elements += `<a href="?page=${page}&filter=${filter}">${page}</a>`
+                    } else {
+                        elements += `<a href="?page=${page}">${page}</a>`
+                    }
+                }
+            }
+
+            pagination.innerHTML = elements
+        }
+
+        const pagination = document.querySelector(".pagination")
+
+        if (pagination) {
+            createPagination(pagination)
+        }
+    </script>
+
+{% endblock %}
