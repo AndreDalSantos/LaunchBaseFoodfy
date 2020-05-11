@@ -4,7 +4,7 @@ const db = require('../../config/db')
 
 module.exports = {
     paginate(params){
-        const { filter, limit, offset, callback } = params
+        const { filter, limit, offset } = params
 
         let query = "",
         filterQuery = "",
@@ -30,13 +30,10 @@ module.exports = {
         ${filterQuery}
         LIMIT $1 OFFSET $2`
 
-        db.query(query, [limit, offset], function(err, results){
-            if(err) throw `database error ${err}`
-            callback(results.rows)
-        })
+        return db.query(query, [limit, offset])
 
     },
-    find(id, callback){
+    find(id){
         // db.query(`
         //     SELECT recipes.*, chefs.name AS chef_name 
         //     FROM recipes 
@@ -47,20 +44,38 @@ module.exports = {
         //         callback(results.rows[0])
         //     })
 
-        db.query(`
-            SELECT recipes.* FROM recipes 
-            WHERE recipes.id = $1`, [id], function(err, results){
-                if (err) throw `database error!! ${err}`
+        return db.query(`SELECT recipes.* FROM recipes 
+            WHERE recipes.id = $1`, [id])
 
-                callback(results.rows[0])
-            })
+        // db.query(`
+        //     SELECT recipes.* FROM recipes 
+        //     WHERE recipes.id = $1`, [id], function(err, results){
+        //         if (err) throw `database error!! ${err}`
+
+        //         callback(results.rows[0])
+        //     })
 
     },
-    chefsSelectOptions(callback){
-        db.query(`SELECT name, id FROM chefs`, function(err, results){
-            if(err) throw 'database error'
+    chefsSelectOptions(){
+        return db.query(`SELECT * FROM chefs`)
+
+        // return db.query(`SELECT name, id FROM chefs`)
+        // db.query(`SELECT name, id FROM chefs`, function(err, results){
+        //     if(err) throw 'database error'
             
-            callback(results.rows)
-        })
+        //     callback(results.rows)
+        // })
+    },
+    recipe_files(id){
+        return db.query(`
+            SELECT * FROM recipe_files 
+            WHERE recipe_id = $1
+        `, [id])
+    },
+    files(id){
+        return db.query(`
+            SELECT * FROM files
+            WHERE files.id = $1
+        `, [id])
     }
 }

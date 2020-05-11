@@ -31,7 +31,11 @@
         {% for recipe in recipes %}
             <div class="card">
                 <div class="card-image-container">
-                    <img src="{{recipe.image}}" alt="imagem de {{recipe.title}}">
+                    <img 
+                            src="{{recipe.src}}" 
+                            alt="{{recipe.name}}"
+                            onclick="Lightbox.open()"
+                        >
                 </div>
                 <div class="card-text">
                     <div class="card-content">

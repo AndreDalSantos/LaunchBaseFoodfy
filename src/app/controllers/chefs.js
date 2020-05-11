@@ -36,27 +36,52 @@ module.exports = {
     create(req, res) {
         return res.render('chefs/createChef')
     },
-    show(req, res) {
+    async show(req, res) {
 
-        const recipes = Recipe.getRecipes(req.params.id, function(recipes){
+        try{
+            let results = await Recipe.getRecipes(req.params.id)
+            const recipes = results.rows
+
             if(!recipes) return res.send('recipes not found')
+
+            results = await Chef.find(req.params.id)
+            const chef = results.rows[0]
             
-            Chef.find(req.params.id, function(chef){
-                if(!chef) return res.send('chef not found')
-    
-                chef.created_at = date(chef.created_at).format
-    
-                
-                console.log(chef)
-                console.log(recipes)
-                return res.render("chefs/showChef", { chef, recipes })
-            })
-
+            if(!chef) return res.send('chef not found')
             
-        })
+            chef.created_at = date(chef.created_at).format
 
-        console.log(recipes)
+            //recipe files
+            let recipe_files = []
+            for(let i = 0; i < recipes.length; i++) {
+                results = await Recipe.recipe_files(recipes[i].id)
+                recipe_files[i] = results.rows[0]
+            }
 
+            //files
+            let files = []
+            for(let i = 0; i < recipe_files.length; i++) {
+                results = await Recipe.files(recipe_files[i].file_id)
+                files[i] = results.rows[0]
+            }
+
+            files = files.map(file => ({
+                ...file,
+                src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+            }))
+
+            for(let i = 0; i < recipes.length; i++) {
+                recipes[i] = {
+                    ...files[i],
+                    ...recipes[i]
+                }
+            }
+            
+            return res.render("chefs/showChef", { chef, recipes, files })
+            
+        } catch (err) {
+            throw new Error(err)
+        }
         
     },
     post(req, res){
@@ -73,14 +98,15 @@ module.exports = {
             return res.redirect(`/chefs/${chef.id}`)
         })
     },
-    edit(req, res){
-        Chef.find(req.params.id, function (chef) {
-            if (!chef) return res.send('chef not found')
+    async edit(req, res){
+        let chef = await Chef.find(req.params.id)
+        chef = chef.rows[0]
 
-            chef.created_at = date(chef.created_at).format
+        if (!chef) return res.send('chef not found')
 
-            return res.render("chefs/edit", { chef })
-        })
+        chef.created_at = date(chef.created_at).format
+
+        return res.render("chefs/edit", { chef })
         
     },
     put(req, res) {
@@ -104,4 +130,3 @@ module.exports = {
         })
     }
 }
-

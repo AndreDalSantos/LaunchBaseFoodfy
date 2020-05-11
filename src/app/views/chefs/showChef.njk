@@ -36,9 +36,16 @@
     <section class="cards-show-chef">
         {% for recipe in recipes %}
             <div class="card-show-chef">
+
                 <div class="card-image-container-show-chef">
-                    <img src="{{recipe.image}}" alt="imagem de {{recipe.title}}">
+                    {# <img src="{{recipe.image}}" alt="imagem de {{recipe.title}}"> #}
+                    <img 
+                        src="{{recipe.src}}" 
+                        alt="{{recipe.name}}"
+                        onclick="Lightbox.open()"
+                    >
                 </div>
+
                 <div class="card-text-show-chef">
                     <div class="card-content-show-chef">
                         <p>{{recipe.title}}</p>

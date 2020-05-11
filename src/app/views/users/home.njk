@@ -20,7 +20,12 @@
         {% for item in recipes %}
             <div class="card" id="{{item.id}}">
                 <div class="card_image-container">
-                    <img src="{{item.image}}" alt="imagem de {{item.title}}">
+                    <img 
+                            src="{{item.src}}" 
+                            alt="{{item.name}}"
+                            onclick="Lightbox.open()"
+                        >
+                    {# <img src="{{item.image}}" alt="imagem de {{item.title}}"> #}
                 </div>
                 <div class="card_content">
                     <p>{{item.title}}</p>
@@ -44,7 +49,6 @@
     ></div>
     {# <footer class="rodape">Todos os direitos reservados</footer> #}
 
-    <script src="/scripts.js"></script>
     <script>
         function paginate(selectedPage, totalPages) {
             let pages = [],

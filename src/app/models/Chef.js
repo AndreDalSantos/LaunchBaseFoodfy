@@ -34,7 +34,7 @@ module.exports = {
         })
 
     },
-    find(id, callback){
+    find(id){
         // db.query(`
         //     SELECT * 
         //     FROM chefs 
@@ -44,18 +44,27 @@ module.exports = {
         //         callback(results.rows[0])
         //     })
 
-        db.query(`
-        SELECT chefs.*, (SELECT count(*) FROM chefs) AS total, count(recipes) AS total_recipes
-        FROM chefs
-        LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
-        WHERE chefs.id = $1
-        GROUP BY chefs.id
-        `, [id], function(err, results){
-            if(err) throw `database error: ${err}`
+        const query = `
+            SELECT chefs.*, (SELECT count(*) FROM chefs) AS total, count(recipes) AS total_recipes
+            FROM chefs
+            LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
+            WHERE chefs.id = $1
+            GROUP BY chefs.id
+        `
+        return db.query(query, [id])
 
-            //console.log(results.rows[0])
-            callback(results.rows[0])
-        })
+        // db.query(`
+        // SELECT chefs.*, (SELECT count(*) FROM chefs) AS total, count(recipes) AS total_recipes
+        // FROM chefs
+        // LEFT JOIN recipes ON (chefs.id = recipes.chef_id)
+        // WHERE chefs.id = $1
+        // GROUP BY chefs.id
+        // `, [id], function(err, results){
+        //     if(err) throw `database error: ${err}`
+
+        //     //console.log(results.rows[0])
+        //     callback(results.rows[0])
+        // })
 
     },
     update(data, callback){
