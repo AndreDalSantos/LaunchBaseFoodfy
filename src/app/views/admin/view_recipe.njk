@@ -1,0 +1,76 @@
+{% extends "layout_admin.njk" %}
+
+{% block head %}
+    <title>{{recipe.title}} - Foodfy</title>
+{% endblock head %}
+
+{% block content %}
+
+    <div class="view_recipe_head">
+        <h2>Receita: {{recipe.title}}</h2>
+        <a href="/admin/recipes/{{recipe.id}}/edit">Editar receita</a>
+    </div>
+
+    <div class="image-view-container">
+        <div class="highlight">
+            {% if not files[0] %}
+                <img src="http://placehold.it/500x500?text=PRODUTO SEM FOTO">
+            {% else %}
+                <img 
+                    src="{{files[0].src}}" 
+                    alt="{{files[0].name}}"
+                    onclick="Lightbox.open()"
+                >
+            {% endif %}
+
+            <div class="lightbox-target">
+                <img 
+                    src="{{files[0].src}}" 
+                    alt="{{files[0].name}}"
+                >
+                <a 
+                    href="#" 
+                    class="lightbox-close"
+                    onclick="Lightbox.close()"
+                >
+                    <i class="material-icons">close</i>
+                </a>
+            </div>
+
+        </div>
+        <div class="gallery-preview">
+            {% for image in files %}
+                <img 
+                    src="{{image.src}}" 
+                    alt="{{image.name}}"
+                    {% if loop.index0 == 0 %}
+                        class="active"
+                    {% endif %}
+                    onclick="ImageGallery.setImage(event)"
+                >
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="view-title">{{recipe.title}}</div>
+
+    <div class="view-author">por {{chef.name}}</div>
+
+    <div class="sub-title-view-recipe">Ingredientes</div>
+    <div class="content-view-recipe">
+        {% for ingredient in recipe.ingredients %}
+            <li>{{ingredient}}</li>
+        {% endfor %}
+    </div>     
+
+    <div class="sub-title-view-recipe">Modo de preparo</div>
+    <div class="content-view-recipe">
+        {% for step in recipe.preparation %}
+            <li>{{step}}</li>
+        {% endfor %}
+    </div>     
+
+    <div class="sub-title-view-recipe">Informações adicionais</div>
+    <div class="content-view-recipe" id="last">{{recipe.information}}</div>
+
+{% endblock content %}

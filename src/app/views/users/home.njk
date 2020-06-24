@@ -1,111 +1,64 @@
 {% extends "layout.njk" %}
 
+{% block filter_content %}
+    {% include "./input_field.njk" %}  
+{% endblock %}
+
 {% block content %}
 
-    <div id="bl1">
-        <div>
-            <p>As melhores receitas</p>
-            <p>Aprenda a construir os melhores pratos com receitas criadas por profissionais do mundo inteiro.</p>
-        </div>
+      <div class="primary-block">
 
-        <div>
-            <img src="imagens/chef.png" alt="">
-        </div>
-    </div>
-
-    <p>Mais acessadas</p>
-
-    <section class="cards">
-
-        {% for item in recipes %}
-            <div class="card" id="{{item.id}}">
-                <div class="card_image-container">
-                    <img 
-                            src="{{item.src}}" 
-                            alt="{{item.name}}"
-                            onclick="Lightbox.open()"
-                        >
-                    {# <img src="{{item.image}}" alt="imagem de {{item.title}}"> #}
+        <div class="presentation">
+            <div class="text">
+                <div class="text01">
+                    <p>As melhores receitas</p>
                 </div>
-                <div class="card_content">
-                    <p>{{item.title}}</p>
-                </div>
-                <div class="card_info">
-                    {% for chef in chefs %}
-                        {% if chef.id == item.chef_id%}
-                            <p>por {{chef.name}}</p>
-                        {% endif %}
-                    {% endfor %}
+
+                <div class="text02">
+                    <p>Aprenda a construir os melhores pratos com receitas criadas por profissionais do mundo inteiro.</p>
                 </div>
             </div>
-        {% endfor %}
 
-    </section>
-    <div 
-        class="pagination" 
-        data-page={{pagination.page}} 
-        data-total={{pagination.total}} 
-        data-filter={{filter}}
-    ></div>
-    {# <footer class="rodape">Todos os direitos reservados</footer> #}
+            <div class="image">
+                <img src="aux_folder/Aux_images/chef.png" alt="Chef Foodfy">
+            </div>
+        </div>
 
-    <script>
-        function paginate(selectedPage, totalPages) {
-            let pages = [],
-                oldPage
+        <div class="text03">Mais acessadas</div>
 
-            for (let currentPage = 1; currentPage <= totalPages; currentPage++) {
+        <section class="cards">
+            {% for recipe in recipes %}
+                <div class="card" id="{{recipe.id}}">
+                    <div class="image-container">
+                        <img src="{{recipe.file.src}}" alt="imagem de {{recipe.title}}">
+                    </div>
 
-                const firstAndLastPage = currentPage == 1 || currentPage == totalPages
-                const pagesAfterSelectedPage = currentPage <= selectedPage + 2
-                const pagesBeforeSelectedPage = currentPage >= selectedPage - 2
+                    <div class="title-container">
+                        <p>{{recipe.title}}</p>
+                    </div>
 
-                if (firstAndLastPage || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
+                    <div class="author-container">
+                        {% for chef in chefs %}
+                            {% if chef.id == recipe.chef_id %}
+                                <p>por {{chef.name}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
 
-                    if (oldPage && currentPage - oldPage > 2) {
-                        pages.push("...")
-                    }
+        </section>
 
-                    if (oldPage && currentPage - oldPage == 2) {
-                        pages.push(oldPage + 1)
-                    }
 
-                    pages.push(currentPage)
-                    oldPage = currentPage
-                }
-            }
+        <div class="pagination"
+            data-page={{pagination.page}}
+            data-total={{pagination.total}}
+            data-filter={{filter}}
+        ></div>      
+      </div>
 
-            return pages
-        }
 
-        function createPagination(pagination) {
-            const filter = pagination.dataset.filter
-            const page = + pagination.dataset.page
-            const total = + pagination.dataset.total
-            const pages = paginate(page, total)
-
-            let elements = ""
-
-            for (let page of pages) {
-                if (String(page).includes('...')) {
-                    elements += `<span>${page}</span>`
-                } else {
-                    if (filter) {
-                        elements += `<a href="?page=${page}&filter=${filter}">${page}</a>`
-                    } else {
-                        elements += `<a href="?page=${page}">${page}</a>`
-                    }
-                }
-            }
-
-            pagination.innerHTML = elements
-        }
-
-        const pagination = document.querySelector(".pagination")
-
-        if (pagination) {
-            createPagination(pagination)
-        }
-    </script>
+      <script src="scripts.js"></script>
+    {% include "../pagination.njk" %}
 
 {% endblock %}

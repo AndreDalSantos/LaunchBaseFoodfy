@@ -1,0 +1,21 @@
+<script>
+    const totalRecipes = document.getElementById('total_recipes').value
+    const formDelete = document.querySelector('#form-delete')
+
+    formDelete.addEventListener("submit", function (event) {
+
+        if(totalRecipes > 0) {
+            alert(`Total Receitas: ${totalRecipes} -> Não pode deletar chef que possui receitas!!`)
+            event.preventDefault()
+        } else {
+
+            const confirmation = confirm("Deseja deletar?")
+
+            if (!confirmation) {
+                event.preventDefault()
+            }
+            
+        }
+
+    })        
+</script>

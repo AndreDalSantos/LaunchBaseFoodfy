@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <title>Foodfy</title>
+        {% endblock %}
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="/styles.css">
+
+    </head>
+
+    <body>
+
+        <header class="admin_header_0">
+            <div class="admin_header_1">
+                <div class="admin_header_2">
+                    <h1><a href="/admin/recipes">Foodfy</a></h1>
+                    <h2><a href="/admin/recipes">Receitas</a></h2>
+                    <h2><a href="/chefs">Chefs</a></h2>
+                </div>
+
+                <div>
+                    {% block filter_field_admin %}{% endblock %}                    
+                </div>                
+            </div>
+        </header>
+
+        <div class="admin-primary-block">
+            {% block content %}{% endblock %}
+        </div>
+
+    </body>
+
+    {% include "./selection-active.njk" %}  
+
+    <script src="/scripts.js"></script>
+</html>

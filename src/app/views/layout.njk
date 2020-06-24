@@ -12,30 +12,31 @@
 
     <body>
 
-        <header class="links">
-            <div><a href="/">Foodfy</a></div>
-            <div><a href="/sobre">Sobre</a></div>
-            <div><a href="/receitas">Receitas</a></div>
-            <div><a href="/chefs/index">Chefs</a></div>
+        <div class="header-block">
+            <header>
+                <div class="links">
+                <a href="/">Foodfy</a>
+                <a href="/about">Sobre</a>
+                <a href="/recipes">Receitas</a>
+                <a href="/all_chefs_views">Chefs</a>
+                </div>
+            </header>
 
             <div>
-                <form action="/" method="GET">
-                    <input 
-                        type="text"
-                        name="filter"
-                        placeholder="Titulo da receita"
-                        value={{filter}}
-                    >
-
-                    <button type="submit">Filtrar</button>
-                </form>
+                {% block filter_content %}{% endblock %}
             </div>
-        </header>
+        </div>
 
         {% block content %}{% endblock %}
 
-        <footer class="rodape">Todos os direitos reservados</footer>
-        <script src="/scripts.js"></script>
+        <footer>
+            <div>
+                <p>Todos os direitos reservados. Receitas Foodfy.</p>
+            </div>
+        </footer>
 
     </body>
+
+    {% include "./selection-active.njk" %}  
+
 </html>

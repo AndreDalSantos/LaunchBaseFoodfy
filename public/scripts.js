@@ -3,7 +3,7 @@ const cards = document.querySelectorAll('.card')
 for(let card of cards){
     card.addEventListener('click', function(){
         const recipeIndex = card.getAttribute("id")
-        window.location.href = `/receitas/${recipeIndex}`
+        window.location.href = `/recipes/${recipeIndex}`
     })
 }
 
@@ -49,57 +49,21 @@ for(let item of show_hide_info){
     })
 }
 
-// // /* Scripts Admin */
-// // function addIngredient() {
-// //     const ingredients = document.querySelector("#ingredients");
-// //     const fieldContainer = document.querySelectorAll(".ingredient");
-
-// //     // Realiza um clone do último ingrediente adicionado
-// //     const newField = fieldContainer[fieldContainer.length - 1].cloneNode(true);
-
-// //     // Não adiciona um novo input se o último tem um valor vazio
-// //     if (newField.children[0].value == "") return false;
-
-// //     // Deixa o valor do input vazio
-// //     newField.children[0].value = "";
-// //     ingredients.appendChild(newField);
-// // }
-
-// // document
-// //     .querySelector(".add-ingredient")
-// //     .addEventListener("click", addIngredient);
-
-
-// // function addStep() {
-// //     const ingredients = document.querySelector("#steps");
-// //     const fieldContainer = document.querySelectorAll(".step");
-
-// //     // Realiza um clone do último ingrediente adicionado
-// //     const newField = fieldContainer[fieldContainer.length - 1].cloneNode(true);
-
-// //     // Não adiciona um novo input se o último tem um valor vazio
-// //     if (newField.children[0].value == "") return false;
-
-// //     // Deixa o valor do input vazio
-// //     newField.children[0].value = "";
-// //     steps.appendChild(newField);
-// // }
-
-// // document
-// //     .querySelector(".add-step")
-// //     .addEventListener("click", addStep);
-
-/*=======================fotos==============*/
 const PhotosUpload = {
-    input: "",
+    input: '',
     preview: document.querySelector('#photos-preview'),
-    uploadLimit: 5,
+    uploadLimit: 1,
     files: [],
-    handleFileInput(event) {
+    handleFileInput(event, limit){
         const { files: fileList } = event.target
         PhotosUpload.input = event.target
+        
+        PhotosUpload.uploadLimit = limit || 1
 
-        if (PhotosUpload.hasLimit(event)) return
+        if(PhotosUpload.hasLimit(event)) {
+            PhotosUpload.updateInputFiles()
+            return
+        }
 
         Array.from(fileList).forEach(file => {
 
@@ -110,6 +74,7 @@ const PhotosUpload = {
             reader.onload = () => {
                 const image = new Image()
                 image.src = String(reader.result)
+
                 const div = PhotosUpload.getContainer(image)
                 PhotosUpload.preview.appendChild(div)
             }
@@ -117,14 +82,13 @@ const PhotosUpload = {
             reader.readAsDataURL(file)
         })
 
-        PhotosUpload.input.files = PhotosUpload.getAllFiles()
-
+        PhotosUpload.updateInputFiles()
     },
-    hasLimit(event) {
+    hasLimit(event){
         const { uploadLimit, input, preview } = PhotosUpload
         const { files: fileList } = input
 
-        if (fileList.length > uploadLimit) {
+        if(fileList.length > uploadLimit){
             alert(`Envie no máximo ${uploadLimit} fotos`)
             event.preventDefault()
             return true
@@ -132,7 +96,7 @@ const PhotosUpload = {
 
         const photosDiv = []
         preview.childNodes.forEach(item => {
-            if(item.classList && item.classList.value == 'photo')
+            if (item.classList && item.classList.value == 'photo')
                 photosDiv.push(item)
         })
 
@@ -145,14 +109,14 @@ const PhotosUpload = {
 
         return false
     },
-    getAllFiles() {
-        const dataTransfer = new ClipboardEvent("").clipboardData || new DataTransfer()
+    getAllFiles(){
+        const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer()
 
         PhotosUpload.files.forEach(file => dataTransfer.items.add(file))
 
         return dataTransfer.files
     },
-    getContainer(image) {
+    getContainer(image){
         const div = document.createElement('div')
         div.classList.add('photo')
 
@@ -163,41 +127,47 @@ const PhotosUpload = {
 
         return div
     },
-    getRemoveButton() {
+    getRemoveButton(){
         const button = document.createElement('i')
         button.classList.add('material-icons')
-        button.innerHTML = 'close'
+        button.innerHTML = "close"
         return button
     },
-    removePhoto(event) {
-        const photoDiv = event.target.parentNode    // <div class="photo">
-        const photosArray = Array.from(PhotosUpload.preview.children)
-        const index = photosArray.indexOf(photoDiv)
+    removePhoto(event){
+        const photoDiv = event.target.parentNode // <div class="photo">
+        const newFiles = Array.from(PhotosUpload.preview.children).filter(function(file){
+            if(file.classList.contains('photo') && !file.getAttribute('id')) return true
+        })
+        
+        
+        const index = newFiles.indexOf(photoDiv)
 
         PhotosUpload.files.splice(index, 1)
-        PhotosUpload.input.files = PhotosUpload.getAllFiles()
 
+        PhotosUpload.updateInputFiles()
         photoDiv.remove()
     },
     removeOldPhoto(event){
         const photoDiv = event.target.parentNode
 
         if(photoDiv.id){
-            const removedFiles = document.querySelector('input[name="removed_files"]')
-
+            const removedFiles = document.querySelector('input[name="removed_files"')
             if(removedFiles){
                 removedFiles.value += `${photoDiv.id},`
             }
         }
 
         photoDiv.remove()
+    },
+    updateInputFiles(){
+        PhotosUpload.input.files = PhotosUpload.getAllFiles()
     }
 }
 
 const ImageGallery = {
-    highlight: document.querySelector('.gallery .highlight .gallery-highlight-img1'),
+    highlight: document.querySelector('.image-view-container .highlight > img'),
     previews: document.querySelectorAll('.gallery-preview img'),
-    setImage(e) {
+    setImage(e){
         const { target } = e
 
         ImageGallery.previews.forEach(preview => preview.classList.remove('active'))
@@ -205,7 +175,6 @@ const ImageGallery = {
 
         ImageGallery.highlight.src = target.src
         Lightbox.image.src = target.src
-
     }
 }
 
@@ -221,8 +190,8 @@ const Lightbox = {
     },
     close() {
         Lightbox.target.style.opacity = 0
-        Lightbox.target.style.top = "-100%"
-        Lightbox.target.style.bottom = "initial"
-        Lightbox.closeButton.style.top = "-80px"
+        Lightbox.target.style.top = '-100%'
+        Lightbox.target.style.bottom = 'initial'
+        Lightbox.closeButton.style.top = '-80px'
     }
 }

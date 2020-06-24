@@ -1,0 +1,61 @@
+{% extends "layout_admin.njk" %}
+
+{% block head %}
+    <title>Foodfy [Admin]</title>
+{% endblock head %}
+
+{% block filter_field_admin %}
+    <form class="filter_container_admin" action="/admin/recipes" method="GET">
+        <input 
+            type="text"
+            name="filter"
+            placeholder="Título da receita"
+            value={{filter}}
+        >
+        <button type="submit">Filtrar</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+
+    <div class="index-head-container">
+        <p>Gerenciar Receitas</p>
+        <div class="button_father">
+            <div class="button_child">
+                <a href="/admin/recipes/create">Novo</a>
+            </div>
+        </div>
+    </div>
+    
+    <section class="cards cards2">
+        {% for recipe in recipes %}
+            <div class="card" id="{{recipe.id}}">
+                <div class="image-container">
+                    <img src="{{recipe.file.src}}" alt="imagem de {{recipe.title}}">
+                </div>
+
+                <div class="title-container">
+                    <p>{{recipe.title}}</p>
+                </div>
+
+                <div class="author-container">
+                    {% for chef in chefs %}
+                        {% if chef.id == recipe.chef_id %}
+                            <p>por {{chef.name}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+
+    <div class="pagination"
+        data-page={{pagination.page}}
+        data-total={{pagination.total}}
+        data-filter={{filter}}
+    ></div>
+
+    {% include "./card_click.njk" %}
+    {% include "../pagination.njk" %}
+    
+{% endblock content %}

@@ -1,41 +1,30 @@
-{% extends "admin/layout2.njk" %}
+{% extends "layout_admin.njk" %}
 
 {% block head %}
-    <title>Criar receita</title>
+    <title>Foodfy -> Editando receita: {{recipe.title}}</title>
 {% endblock head %}
 
 {% block content %}
 
-    <form method="POST" action="/admin/recipes?_method=PUT" enctype="multipart/form-data">
+    <form action="/admin/recipes?_method=PUT" method="post" enctype="multipart/form-data">
 
-        <div class="header-create">
-            <div>
-                <h1>Editando Receita</h1>
+        <div class="create-container">
+            <p>Editando receita</p>
+            <div class="buttons-container">
+                <button class="delete-button" type="subimt" form="form-delete">Deletar</button>
+                <button type="submit">Salvar receita</button>
             </div>
-
-            {# <div>
-                <button type="submit">Salvar</button>
-            </div> #}
-
-            <div class="buttons">
-                <div>
-                    <button form="form-delete" type="submit">Deletar</button>
-                </div>
-                <div>
-                    <button type="submit">Salvar</button>
-                </div>
-            </div>
+            <input type="hidden" name="id" value={{recipe.id}}>
         </div>
 
         {% include 'admin/fields.njk' %}
-        <input type="hidden" name="id" value="{{recipe.id}}">
 
     </form>
+
     <form id="form-delete" action="/admin/recipes?_method=DELETE" method="post">
-        <input type="hidden" name="id" value="{{recipe.id}}">
-        {# <button type="submit">Deletar</button> #}
+        <input type="hidden" name="id" value={{ recipe.id }}>
     </form>
-    {# <script src="/scripts_admin.js"></script> #}
-    {% include 'admin/confirm.njk' %}
+
+    {% include "../delete_confirm.njk" %}  
 
 {% endblock content %}

@@ -1,0 +1,22 @@
+<script>
+    //***** muda estilo do texto da tag a conforme caminho -> Layout_admin*/
+    const currentPage = location.pathname
+    const menuItems = document.querySelectorAll('header .admin_header_1 .admin_header_2 h2 a')
+
+    for (item of menuItems){
+        if(currentPage.includes(item.getAttribute('href'))){
+            item.classList.add('active_2')
+        }
+    }
+
+    //***** muda estilo do texto da tag a conforme caminho -> Layout*/
+    const currentPage2 = location.pathname
+    const menuItems2 = document.querySelectorAll('header .links a')
+
+    for (item of menuItems2){
+        if(currentPage2.includes(item.getAttribute('href'))){
+            item.classList.add('active_3')
+        }
+    }
+
+</script>

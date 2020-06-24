@@ -1,0 +1,11 @@
+{% block filter_content %}
+<form class="filter_container" action="/recipes" method="GET">
+    <input 
+        type="text"
+        name="filter"
+        placeholder="Titulo da receita"
+        value={{filter}}
+    >
+    <button type="submit">Filtrar</button>
+</form>
+{% endblock %}

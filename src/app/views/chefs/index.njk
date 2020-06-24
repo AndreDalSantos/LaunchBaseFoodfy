@@ -1,13 +1,25 @@
-{% extends "chefs/layout2.njk" %}
+{% extends "layout_admin.njk" %}
+
+{% block filter_field_admin %}
+    <form class="filter_container_admin" action="/chefs" method="GET">
+        <input 
+            type="text"
+            name="filter"
+            placeholder="Nome do chef"
+            value={{filter}}
+        >
+        <button type="submit">Filtrar</button>
+    </form>
+{% endblock %}
 
 {% block content %}
 
-    <div class="sub-title-chef">
-        <div>
-            <h1>Gerenciar Chefs</h1>
-        </div>
-        <div>
-            <a href="/chefs/create">Novo</a>
+    <div class="index-head-container">
+        <p>Gerenciar Chefs</p>
+        <div class="button_father">
+            <div class="button_child">
+                <a href="/chefs/create">Novo</a>
+            </div>
         </div>
     </div>
 
@@ -34,70 +46,12 @@
         {% endfor %}
     </section>
 
-    <div 
-            class="pagination" 
-            data-page={{pagination.page}} 
-            data-total={{pagination.total}} 
-            data-filter={{filter}}
-            ></div>
-
-    <script>
-        function paginate(selectedPage, totalPages) {
-            let pages = [],
-                oldPage
-
-            for (let currentPage = 1; currentPage <= totalPages; currentPage++) {
-
-                const firstAndLastPage = currentPage == 1 || currentPage == totalPages
-                const pagesAfterSelectedPage = currentPage <= selectedPage + 2
-                const pagesBeforeSelectedPage = currentPage >= selectedPage - 2
-
-                if (firstAndLastPage || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
-
-                    if (oldPage && currentPage - oldPage > 2) {
-                        pages.push("...")
-                    }
-
-                    if (oldPage && currentPage - oldPage == 2) {
-                        pages.push(oldPage + 1)
-                    }
-
-                    pages.push(currentPage)
-                    oldPage = currentPage
-                }
-            }
-
-            return pages
-        }
-
-        function createPagination(pagination) {
-            const filter = pagination.dataset.filter
-            const page = + pagination.dataset.page
-            const total = + pagination.dataset.total
-            const pages = paginate(page, total)
-
-            let elements = ""
-
-            for (let page of pages) {
-                if (String(page).includes('...')) {
-                    elements += `<span>${page}</span>`
-                } else {
-                    if (filter) {
-                        elements += `<a href="?page=${page}&filter=${filter}">${page}</a>`
-                    } else {
-                        elements += `<a href="?page=${page}">${page}</a>`
-                    }
-                }
-            }
-
-            pagination.innerHTML = elements
-        }
-
-        const pagination = document.querySelector(".pagination")
-
-        if (pagination) {
-            createPagination(pagination)
-        }
-    </script>
+    <div class="pagination"
+        data-page={{pagination.page}}
+        data-total={{pagination.total}}
+        data-filter={{filter}}
+    ></div>
+    
+    {% include "../pagination.njk" %}
 
 {% endblock content %}

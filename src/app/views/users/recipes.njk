@@ -1,0 +1,47 @@
+{% extends "layout.njk" %}
+
+{% block head %}
+    <title>Receitas - Foodfy</title>
+{% endblock %}
+
+{% block filter_content %}
+    {% include "./input_field.njk" %}  
+{% endblock %}
+
+{% block content %}
+      <div class="primary-block">
+
+        <section class="cards cards2">
+            {% for recipe in recipes %}
+                <div class="card" id="{{recipe.id}}">
+                    <div class="image-container">
+                        <img src="{{recipe.file.src}}" alt="imagem de {{recipe.title}}">
+                    </div>
+
+                    <div class="title-container">
+                        <p>{{recipe.title}}</p>
+                    </div>
+
+                    <div class="author-container">
+                        {% for chef in chefs %}
+                            {% if chef.id == recipe.chef_id %}
+                                <p>por {{chef.name}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+        </section>
+
+        <div class="pagination"
+            data-page={{pagination.page}}
+            data-total={{pagination.total}}
+            data-filter={{filter}}
+        ></div>
+      </div> 
+
+      <script src="scripts.js"></script>
+    {% include "../pagination.njk" %}
+
+{% endblock %}

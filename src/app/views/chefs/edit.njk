@@ -1,65 +1,33 @@
-{% extends "chefs/layout2.njk" %}
+{% extends "layout_admin.njk" %}
+
+{% block head %}
+    <title>Foodfy -> Editando chef: {{chef.name}}</title>
+{% endblock head %}
 
 {% block content %}
 
-    <div class="card-edit-chef">
-        <section class="details">
-        
-            <div class="edit-header">
-                <h3>Editar Chef</h3>
-            
-                <form id="form-delete" action="/chefs?_method=DELETE" method="post">
-                    <input type="hidden" name="id" value={{chef.id}}>
-                    <button id="delete-button" type="submit">Deletar</button>
-                </form>
+    <form action="/chefs?_method=PUT" method="post" enctype="multipart/form-data">
 
-                <button id="save-button" form="putForm" type="submit">Salvar</button>
-
+        <div class="create-container">
+            <p>Editando chef</p>
+            <div class="buttons-container">
+                <button class="delete-button" type="submit" form="form-delete">Deletar</button>
+                <button type="submit">Salvar chef</button>
             </div>
+            <input type="hidden" name="id" value={{chef.id}}>
+        </div>
 
+        {% include 'chefs/fields.njk' %}
 
-            <form id="putForm" method="POST" action="/chefs?_method=PUT">
+    </form>
 
-                {% include 'chefs/fields.njk' %}
+    <form id="form-delete" action="/chefs?_method=DELETE" method="post">
+        <input type="hidden" name="id" value={{ chef.id }}>
+    </form>
 
-                <input type="hidden" name="id" value={{chef.id}}>
+    <input type="hidden" name="total_recipes" id="total_recipes" value={{chef.total_recipes}}>
 
-            </form>
-
-            
-
-        </section>
-
-        <input type="hidden" name="total_recipes" id="total_recipes" value={{chef.total_recipes}}>
-
-        {# <div>
-            <p>Receitas: {{chef.total_recipes}}</p>
-        </div> #}
-
-    </div>
-
-    <script>
-        const totalRecipes = document.getElementById('total_recipes').value
-        const formDelete = document.querySelector('#form-delete')
-
-        formDelete.addEventListener("submit", function (event) {
-
-            if(totalRecipes > 0) {
-                alert(`Total Receitas: ${totalRecipes} -> Não pode deletar chef que possui receitas!!`)
-                event.preventDefault()
-            } else {
-
-                const confirmation = confirm("Deseja deletar?")
-
-                if (!confirmation) {
-                    event.preventDefault()
-                }
-                
-            }
-
-        })
-
-        
-    </script>
+    {# {% include "../delete_confirm.njk" %}   #}
+    {% include "./delete_confirm_chef.njk" %}  
 
 {% endblock content %}

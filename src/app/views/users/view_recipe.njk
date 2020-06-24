@@ -2,63 +2,56 @@
 
 {% block head %}
     <title>Foodfy -
-        {{recipeClicked.title}}</title>
+        {{recipe.title}}</title>
 {% endblock %}
 
 {% block content %}
     <section class="recipeView">
-        <div class="image-view-container">
-            {# <img src="{{recipeClicked.image}}" alt="imagem de {{recipeClicked.title}}"> #}
-            <section recipe-single>
-                <div class="gallery">
-                    <div class="highlight">
-                        {% if not files[0] %}
-                            <img class="gallery-highlight-img1" src="http://placehold.it/500x500?text=PRODUTO SEM FOTO" alt="">
-                        {% else %}
-                            <img 
-                                class="gallery-highlight-img1"
-                                src="{{files[0].src}}" 
-                                alt="{{files[0].name}}"
-                                onclick="Lightbox.open()"
-                            >
-                        {% endif %}
+        <div class="image-view-container view-recipe-users-image-view-container">
+            {# <img src="{{files[0].src}}" alt="imagem de {{recipe.title}}"> #}
+            <div class="highlight">
+            {% if not files[0] %}
+                <img src="http://placehold.it/500x500?text=PRODUTO SEM FOTO">
+            {% else %}
+                <img 
+                    src="{{files[0].src}}" 
+                    alt="{{files[0].name}}"
+                    onclick="Lightbox.open()"
+                >
+            {% endif %}
 
-                        <div class="lightbox-target">
-                            <img src="{{files[0].src}}" alt="{{files[0].name}}">
-                            <a 
-                                href="#" 
-                                class="lightbox-close"
-                                onclick="Lightbox.close()"
-                            >
-                                <i class="material-icons">close</i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="gallery-preview">
-                        {% for image in files %}
-                            <img 
-                                src="{{image.src}}" 
-                                alt="{{image.name}}"
-                                {% if loop.index0 == 0 %}
-                                    class="active"
-                                {% endif %}
-                                onclick="ImageGallery.setImage(event)"
-                            >
-                        {% endfor %}
-                    </div>
-                </div>
-            </section>
+            <div class="lightbox-target">
+                <img 
+                    src="{{files[0].src}}" 
+                    alt="{{files[0].name}}"
+                >
+                <a 
+                    href="#" 
+                    class="lightbox-close"
+                    onclick="Lightbox.close()"
+                >
+                    <i class="material-icons">close</i>
+                </a>
+            </div>
+
+        </div>
+        <div class="gallery-preview">
+            {% for image in files %}
+                <img 
+                    src="{{image.src}}" 
+                    alt="{{image.name}}"
+                    {% if loop.index0 == 0 %}
+                        class="active"
+                    {% endif %}
+                    onclick="ImageGallery.setImage(event)"
+                >
+            {% endfor %}
+        </div>
         </div>
 
-        <div class="view-title">{{recipeClicked.title}}</div>
+        <div class="view-title">{{recipe.title}}</div>
 
-        <div class="view-author">        
-            {% for chef in chefs %}
-                {% if chef.id == recipeClicked.chef_id%}
-                    por {{chef.name}}
-                {% endif %}
-            {% endfor %}        
-        </div>
+        <div class="view-author">{{chef.name}}</div>
 
         <div class="sub-title st1">
             <div class="sub-title_0">Ingredientes</div>
@@ -66,7 +59,7 @@
         </div>
 
         <div class="ingredients-block">
-            {% for ingredient in recipeClicked.ingredients %}
+            {% for ingredient in recipe.ingredients %}
                 <li>{{ingredient}}</li>
             {% endfor %}
         </div>
@@ -77,7 +70,7 @@
         </div>
 
         <div class="prepare-block">
-            {% for item in recipeClicked.preparation %}
+            {% for item in recipe.preparation %}
                 <li>{{item}}</li>
             {% endfor %}
         </div>
@@ -87,11 +80,9 @@
             <div class="sub-title_1" id="infoId">Mostrar</div>     
         </div>
 
-        <div class="information-block">{{recipeClicked.information}}</div>
+        <div class="information-block">{{recipe.information}}</div>
 
     </section>
-
-    {# <footer class="rodape">Todos os direitos reservados</footer> #}
 
     <script src="/scripts.js"></script>
 {% endblock %}
