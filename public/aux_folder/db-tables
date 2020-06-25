@@ -6,6 +6,7 @@ Table recipes {
   preparation text[]
   information text
   created_at timestamp [Default: 'now()']
+  updated_at timestamp [Default: 'now()']
 }
 
 Table chefs {
@@ -13,7 +14,7 @@ Table chefs {
   file_id int [UNIQUE]
   name text
   created_at timestamp [Default: 'now()']
-  
+  updated_at timestamp [Default: 'now()']
 }
 
 Table files {

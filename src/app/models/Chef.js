@@ -2,17 +2,6 @@ const { date } = require('../../lib/utils')
 const db = require('../../config/db')
 
 module.exports = {
-    all(callback){
-
-        const query = `
-            SELECT * FROM chefs
-        `
-        db.query(query, function(err, results){
-            if(err) throw `Database error: ${err}`
-
-            callback(results.rows)
-        })
-    },
     create(data){
         const query = `
             INSERT INTO chefs (
@@ -63,12 +52,6 @@ module.exports = {
         ]
 
         return db.query(query, values)
-
-        // db.query(query, values, function(err, results){
-        //     if(err) throw `Database error: ${err}`
-
-        //     callback()
-        // })
     },    
     updateWithoutChangedPhoto(data){
 
@@ -130,6 +113,7 @@ module.exports = {
         SELECT chefs.*, ${totalQuery}
         FROM chefs
         ${filterQuery}
+        ORDER BY updated_at DESC
         LIMIT $1 OFFSET $2`
 
         return db.query(query, [limit, offset])

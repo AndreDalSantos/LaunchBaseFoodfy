@@ -1,4 +1,4 @@
-{% extends "layout.njk" %}
+{% extends "parts/layout.njk" %}
 
 {% block filter_content %}
     {% include "./input_field.njk" %}  
@@ -59,6 +59,6 @@
 
 
       <script src="scripts.js"></script>
-    {% include "../pagination.njk" %}
+    {% include "../parts/pagination.njk" %}
 
 {% endblock %}

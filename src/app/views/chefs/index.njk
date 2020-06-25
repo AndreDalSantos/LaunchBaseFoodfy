@@ -1,4 +1,4 @@
-{% extends "layout_admin.njk" %}
+{% extends "parts/layout_admin.njk" %}
 
 {% block filter_field_admin %}
     <form class="filter_container_admin" action="/chefs" method="GET">
@@ -52,6 +52,6 @@
         data-filter={{filter}}
     ></div>
     
-    {% include "../pagination.njk" %}
+    {% include "../parts/pagination.njk" %}
 
 {% endblock content %}

@@ -29,7 +29,7 @@ module.exports = {
                     page
                 }
     
-                results = await Recipe.chefSelectOptions()
+                results = await Recipe.selectChefs()
                 const chefs = results.rows
     
                 let changedRecipe = []
@@ -65,7 +65,7 @@ module.exports = {
     async create(req, res){
 
         try {
-            let results = await Recipe.chefSelectOptions()
+            let results = await Recipe.selectChefs()
             const chefs = results.rows
 
             return res.render('admin/create', {chefOptions: chefs})
@@ -75,7 +75,7 @@ module.exports = {
             throw `Error: ${err}`
         }
 
-        // Recipe.chefSelectOptions(function(options){
+        // Recipe.selectChefs(function(options){
         //     return res.render('admin/create', {chefOptions: options})
         // })
     },
@@ -163,7 +163,7 @@ module.exports = {
         
                 if(!recipe) return res.send('Recipe not found')
         
-                results = await Recipe.chefSelectOptions()
+                results = await Recipe.selectChefs()
                 const chefs = results.rows
         
                 results = await RecipeFile.allFromOneRecipe(recipe.id)

@@ -32,10 +32,5 @@ module.exports = {
             DELETE FROM recipe_files WHERE recipe_files.file_id = $1
         `
         return db.query(query, [file_id])
-    },
-    files(id){
-        return db.query(`        
-            SELECT * FROM files WHERE id = $1
-        `, [id])
     }
 }

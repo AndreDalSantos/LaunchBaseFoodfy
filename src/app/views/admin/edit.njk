@@ -1,4 +1,4 @@
-{% extends "layout_admin.njk" %}
+{% extends "parts/layout_admin.njk" %}
 
 {% block head %}
     <title>Foodfy -> Editando receita: {{recipe.title}}</title>
@@ -25,6 +25,6 @@
         <input type="hidden" name="id" value={{ recipe.id }}>
     </form>
 
-    {% include "../delete_confirm.njk" %}  
+    {% include "../parts/delete_confirm.njk" %}  
 
 {% endblock content %}

@@ -1,4 +1,4 @@
-{% extends "layout_admin.njk" %}
+{% extends "parts/layout_admin.njk" %}
 
 {% block head %}
     <title>Foodfy [Admin]</title>
@@ -56,6 +56,6 @@
     ></div>
 
     {% include "./card_click.njk" %}
-    {% include "../pagination.njk" %}
+    {% include "../parts/pagination.njk" %}
     
 {% endblock content %}

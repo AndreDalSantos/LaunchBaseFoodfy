@@ -1,4 +1,4 @@
-{% extends "layout.njk" %}
+{% extends "parts/layout.njk" %}
 
 {% block head %}
     <title>Chefs - Foodfy</title>
@@ -42,6 +42,6 @@
             data-filter={{filter}}
         ></div>
     </div>
-    {% include "../pagination.njk" %}
+    {% include "../parts/pagination.njk" %}
 
 {% endblock %}

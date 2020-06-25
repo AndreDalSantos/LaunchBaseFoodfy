@@ -9,7 +9,7 @@ module.exports = {
     async index(req, res){
         try {
             let { filter, page, limit } = req.query
-
+             
             page = page || 1
             limit = limit || 6
             let offset = limit * (page - 1)
@@ -22,7 +22,7 @@ module.exports = {
             }
     
             let results = await User.paginate(params)
-            const recipes = results.rows
+            let recipes = results.rows
     
             if(recipes[0]){
     
@@ -31,36 +31,37 @@ module.exports = {
                     page
                 }
     
-                results = await User.chefSelectOptions()
+                results = await User.selectChefs()
                 const chefs = results.rows
-    
-                let changedRecipe = []
-    
-                for(i = 0; i < recipes.length; i++){
-    
-                    results = await RecipeFile.allFromOneRecipe(recipes[i].id)
+
+                const recipesPromise = recipes.map(async recipe => {
+                    results = await RecipeFile.allFromOneRecipe(recipe.id)
                     let recipeFile = results.rows[0]
-    
+
                     results = await File.allFilesFromRecipeFile(recipeFile)
                     let file = results.rows[0]
-    
+
                     file = {
                         ...file,
                         src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
                     }
-    
-                    changedRecipe[i] = {
-                        ...recipes[i],
+
+                    recipe = {
+                        ...recipe,
                         file
                     }
-                }
+                    
+                    return recipe
+                })
 
+                recipes = await Promise.all(recipesPromise)
     
-                return res.render('users/home', { recipes:changedRecipe, pagination, filter: params.filter, chefs })
+                return res.render('users/home', { recipes, pagination, filter: params.filter, chefs })
     
             } else {
-                return res.render('users/not-found') // OBS: mudar para not-found
-            } 
+                return res.render('users/not-found') 
+            }             
+
         } catch(err){
             throw new Error(err)
         }
@@ -81,7 +82,7 @@ module.exports = {
             }
     
             let results = await User.paginate(params)
-            const recipes = results.rows
+            let recipes = results.rows
     
             if(recipes[0]){
     
@@ -90,34 +91,35 @@ module.exports = {
                     page
                 }
     
-                results = await User.chefSelectOptions()
+                results = await User.selectChefs()
                 const chefs = results.rows
-    
-                let changedRecipe = []
-    
-                for(i = 0; i < recipes.length; i++){
-    
-                    results = await RecipeFile.allFromOneRecipe(recipes[i].id)
+
+                const recipesPromise = recipes.map(async recipe => {
+                    results = await RecipeFile.allFromOneRecipe(recipe.id)
                     let recipeFile = results.rows[0]
-    
+
                     results = await File.allFilesFromRecipeFile(recipeFile)
                     let file = results.rows[0]
-    
+
                     file = {
                         ...file,
                         src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
                     }
-    
-                    changedRecipe[i] = {
-                        ...recipes[i],
+
+                    recipe = {
+                        ...recipe,
                         file
                     }
-                }
+                    
+                    return recipe
+                })
+
+                recipes = await Promise.all(recipesPromise)
     
-                return res.render('users/recipes', { recipes:changedRecipe, pagination, filter: params.filter, chefs })
+                return res.render('users/recipes', { recipes, pagination, filter: params.filter, chefs })
     
             } else {
-                return res.render('users/not-found') // OBS: mudar para not-found
+                return res.render('users/not-found') 
             } 
         } catch(err){
             throw new Error(err)

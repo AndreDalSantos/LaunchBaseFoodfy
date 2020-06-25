@@ -2,19 +2,6 @@ const { date, removesEmptyPositionsFromArray } = require('../../lib/utils')
 const db = require('../../config/db')
 
 module.exports = {
-    all(callback){
-        const query = `
-            SELECT recipes.*, chefs.name AS chef_name
-            FROM recipes
-            LEFT JOIN chefs ON (recipes.chef_id = chefs.id)
-        `
-        
-        db.query(query, function(err, results){
-            if(err) throw `Database error: ${err}`
-
-            callback(results.rows)
-        })
-    },
     create(data){
         const query = `
             INSERT INTO recipes (
@@ -71,7 +58,7 @@ module.exports = {
 
         return db.query(query, [id])
     },
-    chefSelectOptions(){
+    selectChefs(){
         return db.query(`
             SELECT name, id FROM chefs
         `)
@@ -101,6 +88,7 @@ module.exports = {
         SELECT recipes.*, ${totalQuery}
         FROM recipes
         ${filterQuery}
+        ORDER BY updated_at DESC
         LIMIT $1 OFFSET $2`
 
         return db.query(query, [limit, offset])

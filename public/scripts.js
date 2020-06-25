@@ -193,5 +193,6 @@ const Lightbox = {
         Lightbox.target.style.top = '-100%'
         Lightbox.target.style.bottom = 'initial'
         Lightbox.closeButton.style.top = '-80px'
+        console.log('olá')
     }
 }
