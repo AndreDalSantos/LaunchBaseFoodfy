@@ -1,0 +1,59 @@
+.fields-user-create {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 40px;
+}
+
+.user-fields-checkbox {
+    display: grid;
+    grid-template-columns: 23px 1fr;
+    align-items: center;
+}
+
+.user-fields-checkbox input {
+    margin: 0;
+    width: 15px;
+    height: 15px;
+}
+
+.register-user-fields {
+    display: grid;
+    grid-template-columns: 1fr 137px 157px;
+}
+
+.register-user-fields > button {
+    cursor: pointer;
+}
+
+.register-user-fields > button:hover {
+    background-color: rgb(15, 15, 121);
+    color: rgb(235, 235, 51);
+}
+
+.register-user-fields > a {
+    box-sizing: border-box;
+    margin-left: 20px;
+    text-decoration: none;    
+    background-color: #8a8a8a;
+    align-self: center;
+    margin: 0 auto;
+    padding: 9px 39px;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 0;
+}
+
+.register-user-fields > a:hover {
+    background-color: #685b5b;
+    color: rgb(29, 27, 27);
+}
+
+/* error */
+.error {
+    background-color: #e74c3c;
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <title>Foodfy</title>
+        {% endblock %}
+        
+        {% include "./styles.njk" %}
+
+    </head>
+
+    <body>
+        {% include "./messages.njk" %}
+
+        <header class="admin2_header_0">            
+            <div class="admin2_header_1">
+                <h1>Foodfy</h1>
+            </div>               
+        </header>
+
+        <div class="admin-primary-block">
+            {% block content %}{% endblock %}
+        </div>
+
+    </body>
+
+    {% include "./selection-active.njk" %}  
+
+    <script src="/scripts.js"></script>
+</html>

@@ -1,0 +1,33 @@
+{% extends "parts/layout_admin2.njk" %}
+
+{% block head %}
+    <title>Iniciar Sessão</title>
+{% endblock head %}
+
+{% block content %}
+
+    <form action="/admin/login" method="post">
+
+        <div class="reset-fields">
+            <p>Iniciar Sessão</p>
+        </div>
+
+        {% include 'session/fields-login.njk' %}
+
+        <div class="footer-login-01">
+            <div class="footer-login-02">
+                <ul>
+                    <li>
+                        <a href="/admin/forgot-password">Esqueceu a senha?</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="login-button">
+                <div class="login-button2">
+                    <button type="submit" class="button-login">Acessar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}

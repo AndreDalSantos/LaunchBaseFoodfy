@@ -2,6 +2,8 @@ const { date } = require('../../lib/utils')
 const Recipe = require('../models/Recipe')
 const File = require('../models/File')
 const RecipeFile = require('../models/RecipeFile')
+const Chef = require('../models/Chef')
+const User = require('../models/User')
 
 module.exports = {
     async index(req, res) {
@@ -65,8 +67,11 @@ module.exports = {
     async create(req, res){
 
         try {
-            let results = await Recipe.selectChefs()
+            let results = await Recipe.selectChefsFromUser(req.session.userId)
             const chefs = results.rows
+
+            if(!chefs[0])
+                return res.redirect('/chefs/create')
 
             return res.render('admin/create', {chefOptions: chefs})
 
@@ -90,9 +95,15 @@ module.exports = {
             }
     
             if(req.files.length == 0)
-                return res.send('Please, send at least one image')        
+                return res.send('Please, send at least one image')   
+            
+            const userId = (await Chef.getUserOfChef(req.body.chef)).rows[0].user_id
+            
+            // console.log(req.body)
+            // console.log(userId)
+            // return res.send('fim')
     
-            let results = await Recipe.create(req.body)
+            let results = await Recipe.create(req.body, userId)
             const recipeId = results.rows[0].id
     
             const filesPromise = req.files.map(file => File.create({
@@ -161,9 +172,21 @@ module.exports = {
                 let results = await Recipe.find(req.params.id)
                 const recipe = results.rows[0]
         
-                if(!recipe) return res.send('Recipe not found')
-        
-                results = await Recipe.selectChefs()
+                if(!recipe) return res.render('admin/index', {
+                    error: 'Receita inexistente.'
+                })
+
+                const userLogged = await User.findOne({
+                    where: { id: req.session.userId }
+                })
+
+                results = await Recipe.find(req.params.id)
+                const ownerUserId = results.rows[0].user_id
+
+                if(userLogged.is_admin && userLogged !== ownerUserId) 
+                    results = await Recipe.selectChefsFromUser(ownerUserId)
+                else
+                    results = await Recipe.selectChefsFromUser(userLogged.id)
                 const chefs = results.rows
         
                 results = await RecipeFile.allFromOneRecipe(recipe.id)
@@ -234,7 +257,7 @@ module.exports = {
                     await Promise.all(recipeFilesPromise) 
                 }              
             }
-
+        
             await Recipe.update(req.body)
 
             return res.redirect(`/admin/recipes/${req.body.id}`)

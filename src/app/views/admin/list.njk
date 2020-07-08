@@ -1,0 +1,73 @@
+{% extends "parts/layout_admin.njk" %}
+
+{% block head %}
+    <title>Foodfy - Lista de usuários</title>
+{% endblock head %}
+
+{% block filter_field_admin %}
+    <form class="filter_container_admin" action="/admin/users" method="GET">
+        <input 
+            type="text"
+            name="filter"
+            placeholder="Nome do usuário"
+            value={{filter}}
+        >
+        <button type="submit">Filtrar</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+
+    <div class="index-head-container">
+        <p>Usuários</p>
+        <div class="button_father">
+            <div class="button_child">
+                <a href="/admin/users/register">Novo</a>
+            </div>
+        </div>
+    </div>
+    
+    <section class="cards cards2">
+        {% for user in users %}
+            <div class="card-list-users" id="{{user.id}}">
+
+                <div class="list-users-name-container">
+                    <p>{{user.name}}</p>
+                </div>
+
+                <div class="list-users-mail-container">
+                    <p>{{user.email}}</p>
+                </div>
+
+                <div class="footer-card-list-users">
+                    <a href="/admin/users/edit/{{user.id}}" class="edit-user-button">Editar</a>
+                    <div>
+                        <form id="form-delete-user" action="/admin/users?_method=DELETE" method="post">
+                            <button class="button-remove" type="submit" onclick="deleteConfirm()">Remover</button>
+                            <input type="hidden" name="id" value="{{user.id}}">
+                        </form>
+                        {# {% if user.id == userId %}
+                            <p class="button-remove-false">Remover</p>
+                        {% else %}
+                            <form id="form-delete-user" action="/admin/users?_method=DELETE" method="post">
+                                <button class="button-remove" type="submit" onclick="deleteConfirm()">Remover</button>
+                                <input type="hidden" name="id" value="{{user.id}}">
+                            </form>
+                        {% endif %} #}
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+    </section>
+
+    <div class="pagination"
+        data-page={{pagination.page}}
+        data-total={{pagination.total}}
+        data-filter={{filter}}
+    ></div>
+
+    {% include "../parts/delete_confirm_user.njk" %}
+    {% include "../parts/pagination.njk" %}
+    
+{% endblock content %}

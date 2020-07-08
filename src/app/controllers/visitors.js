@@ -1,4 +1,4 @@
-const User = require('../models/User')
+const Visitor = require('../models/Visitor')
 const File = require('../models/File')
 const RecipeFile = require('../models/RecipeFile')
 const Chef = require('../models/Chef')
@@ -21,7 +21,7 @@ module.exports = {
                 offset
             }
     
-            let results = await User.paginate(params)
+            let results = await Visitor.paginate(params)
             let recipes = results.rows
     
             if(recipes[0]){
@@ -31,7 +31,7 @@ module.exports = {
                     page
                 }
     
-                results = await User.selectChefs()
+                results = await Visitor.selectChefs()
                 const chefs = results.rows
 
                 const recipesPromise = recipes.map(async recipe => {
@@ -56,10 +56,10 @@ module.exports = {
 
                 recipes = await Promise.all(recipesPromise)
     
-                return res.render('users/home', { recipes, pagination, filter: params.filter, chefs })
+                return res.render('visitors/home', { recipes, pagination, filter: params.filter, chefs })
     
             } else {
-                return res.render('users/not-found') 
+                return res.render('visitors/home') 
             }             
 
         } catch(err){
@@ -81,7 +81,7 @@ module.exports = {
                 offset
             }
     
-            let results = await User.paginate(params)
+            let results = await Visitor.paginate(params)
             let recipes = results.rows
     
             if(recipes[0]){
@@ -91,7 +91,7 @@ module.exports = {
                     page
                 }
     
-                results = await User.selectChefs()
+                results = await Visitor.selectChefs()
                 const chefs = results.rows
 
                 const recipesPromise = recipes.map(async recipe => {
@@ -116,10 +116,10 @@ module.exports = {
 
                 recipes = await Promise.all(recipesPromise)
     
-                return res.render('users/recipes', { recipes, pagination, filter: params.filter, chefs })
+                return res.render('visitors/recipes', { recipes, pagination, filter: params.filter, chefs })
     
             } else {
-                return res.render('users/not-found') 
+                return res.render('visitors/recipes') 
             } 
         } catch(err){
             throw new Error(err)
@@ -130,12 +130,12 @@ module.exports = {
         try {
             if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id))
             {
-                let result = await User.findRecipe(req.params.id) 
+                let result = await Visitor.findRecipe(req.params.id) 
                 let recipe = result.rows[0]
     
-                if(!recipe) return res.render('users/not-found')
+                if(!recipe) return res.render('visitors/home')
     
-                result = await User.getChefName(recipe.chef_id)
+                result = await Visitor.getChefName(recipe.chef_id)
                 let chef = result.rows[0]
     
                 result = await RecipeFile.allFromOneRecipe(recipe.id)
@@ -153,18 +153,18 @@ module.exports = {
                     src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
                 }))
                 
-                return res.render('users/view_recipe', { recipe, chef, files })
+                return res.render('visitors/view_recipe', { recipe, chef, files })
     
             }
             else {
-                return res.render('users/not-found')
+                return res.render('visitors/home')
             }
         } catch(err){
             throw new Error(err)
         }
     },
     aboutPage(req, res){
-        return res.render('users/about')
+        return res.render('visitors/about')
     },
     async chefs(req, res){
         try {
@@ -214,10 +214,10 @@ module.exports = {
                     }
                 }
     
-                return res.render('users/chefs', { chefs, pagination, filter })
+                return res.render('visitors/chefs', { chefs, pagination, filter })
     
             } else {
-                return res.render('users/chefs')
+                return res.render('visitors/chefs')
             } 
         } catch(err){
             throw new Error(err)

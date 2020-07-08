@@ -1,0 +1,65 @@
+.footer-login-01 {
+    width: 500px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 134px;
+    align-items: center;
+    margin-top: 35px;
+    height: 37px;
+}
+
+.footer-login-02 ul li {
+    list-style-type: none;    
+}
+
+.footer-login-02 ul li a {
+    text-decoration: none;
+    color: #969696;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.footer-login-02 ul li a:hover {
+    color: #111;
+}
+
+.login-button2 {
+    right: 0;
+}
+
+.button-login {
+    right: 0px;
+    width: 134px;
+    height: 37px;
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.button-login:hover {
+    background-color: rgb(40, 40, 233);
+}
+/* 
+.footer-login-01 .login-button {
+    margin-top: 35px;
+    position: relative;
+}
+
+.footer-login-01 .login-button {
+    position: absolute;
+    right: 0px;
+    width: 134px;
+    height: 37px;
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+} */

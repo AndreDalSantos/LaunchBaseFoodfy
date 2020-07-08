@@ -1,3 +1,58 @@
+// 2ª versão do db
+Table recipes {
+  id int [pk, increment]
+  chef_id int 
+  user_id int
+  title text 
+  ingredients text[]
+  preparation text[]
+  information text
+  created_at timestamp [Default: 'now()']
+  updated_at timestamp [Default: 'now()']
+}
+
+Table chefs {
+  id int [pk, increment]
+  file_id int [UNIQUE]
+  user_id int
+  name text
+  created_at timestamp [Default: 'now()']
+  updated_at timestamp [Default: 'now()']
+}
+
+Table files {
+  id int [pk, increment]
+  name text
+  path text [not null]
+}
+
+Table recipe_files {
+  id int [pk, increment]
+  recipe_id int
+  file_id int [UNIQUE]
+}
+
+Ref: recipe_files.recipe_id > recipes.id
+Ref: recipe_files.file_id > files.id
+Ref: chefs.file_id > files.id
+
+Table users {
+  id int [pk, increment]
+  name text [not null]
+  email text [UNIQUE, not null]
+  password text [not null]
+  reset_token text
+  reset_token_expires text
+  is_admin boolean [Default: false]
+  created_at timestamp [Default: 'now()']
+  updated_at timestamp [Default: 'now()']
+}
+
+Ref: recipes.user_id > users.id
+Ref: chefs.user_id > users.id
+
+************************************************************************
+// 1ª versão do db
 Table recipes {
   id int [pk, increment]
   chef_id int 

@@ -1,0 +1,40 @@
+<div class="fields-user-create">
+
+    <div class="item">
+        <div class="title-line">Nome</div>
+        <div>
+            <input 
+                type="text" 
+                name="name" 
+                class="input-some-text" 
+                value="{{user.name}}" 
+                placeholder="Nome do usuário">
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="title-line">Email</div>
+        <div>
+            <input 
+                type="email" 
+                name="email" 
+                class="input-some-text" 
+                value="{{user.email}}" 
+                placeholder="Email do usuário"
+                onblur="Validate.apply(this, 'isEmail')"
+            >
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="title-line">Senha</div>
+        <div>
+            <input 
+                type="password" 
+                name="password" 
+                class="input-some-text" 
+                placeholder="Sua senha"
+            >
+        </div>
+    </div>
+</div>

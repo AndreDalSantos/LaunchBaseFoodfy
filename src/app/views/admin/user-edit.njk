@@ -1,0 +1,38 @@
+{% extends "parts/layout_admin.njk" %}
+
+{% block head %}
+    <title>Novo Usuário</title>
+{% endblock head %}
+
+{% block content %}
+
+    <form action="/admin/users?_method=PUT" method="post">
+
+        <div class="create-container register-user-fields">
+            <p>Editando usuário</p>
+            <button class="delete-button edit" type="subimt" form="form-delete-user" onclick="deleteConfirm()">Deletar</button>
+            <button type="submit">Salvar</button>
+        </div>
+
+        {% include 'admin/users-fields.njk' %}
+
+        <div class="item">
+           <div>
+                <input 
+                    type="hidden" 
+                    name="id" 
+                    class="hidden-field" 
+                    value="{{user.id}}" 
+                >
+            </div>
+        </div>
+
+    </form>
+
+    <form id="form-delete-user" action="/admin/users?_method=DELETE" method="post">
+        <input type="hidden" name="id" value={{ user.id }}>
+    </form>
+
+    {% include "../parts/delete_confirm_user.njk" %}
+     
+{% endblock content %}

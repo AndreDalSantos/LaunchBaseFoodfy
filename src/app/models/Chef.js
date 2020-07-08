@@ -1,19 +1,23 @@
 const { date } = require('../../lib/utils')
 const db = require('../../config/db')
+const chef = require('../validators/chef')
 
 module.exports = {
+
     create(data){
         const query = `
             INSERT INTO chefs (
                 file_id,
-                name
-            ) VALUES ($1, $2)
+                name,
+                user_id
+            ) VALUES ($1, $2, $3)
             RETURNING id
         `
 
         const values = [
             data.file_id,
-            data.name
+            data.name,
+            data.user_id
         ]
 
         return db.query(query, values)
@@ -82,11 +86,11 @@ module.exports = {
 
         return db.query(query, [id])
 
-        db.query(query, [id], function(err, results){
-            if(err) `Database error ${err}`
+        // db.query(query, [id], function(err, results){
+        //     if(err) `Database error ${err}`
 
-            callback(results.rows)
-        })
+        //     callback(results.rows)
+        // })
     },
     paginate(params){ 
         const { filter, limit, offset } = params
@@ -122,5 +126,21 @@ module.exports = {
         //     if(err) throw `database error ${err}`
         //     callback(results.rows)
         // })
+    },
+    getUserOfChef(chef_id){
+    return db.query(`
+        SELECT user_id FROM chefs
+        WHERE id = $1
+        `, [chef_id])
+    },
+    // async checkIfExistsAnyChef(userId){
+    //     const results = (await db.query('SELECT * FROM chefs WHERE user_id = $1', [userId])).rows[0]
+
+    //     if(results) return true
+
+    //     return false
+    // },
+    getUserId(chefId){
+        return db.query(`SELECT user_id FROM chefs WHERE id = $1`,[chefId])
     }
 }

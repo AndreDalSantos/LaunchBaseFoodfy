@@ -1,0 +1,29 @@
+<div class="fields-password-reset">
+
+    <div class="item">
+        <div class="title-line">Email</div>
+        <div>
+            <input 
+                type="email" 
+                name="email" 
+                class="input-some-text" 
+                value="{{user.email}}" 
+                placeholder="Email do usuário"
+                onblur="Validate.apply(this, 'isEmail')"
+            >
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="title-line">Senha</div>
+        <div>
+            <input 
+                type="password" 
+                name="password" 
+                class="input-some-text" 
+                placeholder="Digite sua senha"
+            >
+        </div>
+    </div>
+</div>
+

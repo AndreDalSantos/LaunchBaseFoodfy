@@ -1,0 +1,21 @@
+{% extends "parts/layout_admin.njk" %}
+
+{% block head %}
+    <title>Editar Usuário</title>
+{% endblock head %}
+
+{% block content %}
+
+    <form action="/admin/users" method="post">
+
+        <div class="create-container register-user-fields">
+            <p>Criando usuário</p>
+            <button type="submit">Salvar</button>
+            <a href="/admin/users">Cancelar</a>
+        </div>
+
+        {% include 'admin/users-fields.njk' %}
+
+    </form>
+
+{% endblock content %}

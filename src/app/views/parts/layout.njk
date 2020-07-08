@@ -4,14 +4,14 @@
         {% block head %}
             <title>Foodfy</title>
         {% endblock %}
-        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="/styles.css">
+        
+        {% include "./styles.njk" %}
 
     </head>
 
     <body>
-
+        {% include "./messages.njk" %}
+        
         <div class="header-block">
             <header>
                 <div class="links">
@@ -19,6 +19,7 @@
                 <a href="/about">Sobre</a>
                 <a href="/recipes">Receitas</a>
                 <a href="/all_chefs_views">Chefs</a>
+                <a href="/admin/login">Login</a>
                 </div>
             </header>
 

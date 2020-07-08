@@ -1,0 +1,15 @@
+.admin2_header_0 {
+    margin-left: 230px;
+    width: 940px;
+    display: block;
+}
+
+.admin2_header_0 .admin2_header_1 > h1 {
+    text-align: center;
+    font-family: Cochin;
+    font-weight: normal;
+    font-size: 28px;
+    color: #111;
+    padding-top: 35px;
+    letter-spacing: 1.65px;
+}

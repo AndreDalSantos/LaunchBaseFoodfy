@@ -4,27 +4,36 @@
         {% block head %}
             <title>Foodfy</title>
         {% endblock %}
-        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="/styles.css">
+        
+        {% include "./styles.njk" %}
 
     </head>
 
     <body>
+        {% include "./messages.njk" %}
 
-        <header class="admin_header_0">
-            <div class="admin_header_1">
-                <div class="admin_header_2">
-                    <h1><a href="/admin/recipes">Foodfy</a></h1>
-                    <h2><a href="/admin/recipes">Receitas</a></h2>
-                    <h2><a href="/chefs">Chefs</a></h2>
+        <div class="admin_header_primary">
+            <header class="admin_header_0">
+                <div class="admin_header_1">
+                    <div class="admin_header_2 admin-layout-users">
+                        <h1><a href="/admin/recipes">Foodfy</a></h1>
+                        <h2><a href="/admin/recipes">Receitas</a></h2>
+                        <h2><a href="/chefs">Chefs</a></h2>
+                        <h2><a href="/admin/users">Usuários</a></h2>
+                    </div>
+
+                    <div>
+                        {% block filter_field_admin %}{% endblock %}                    
+                    </div>                
                 </div>
-
-                <div>
-                    {% block filter_field_admin %}{% endblock %}                    
-                </div>                
+            </header>
+            <div class="out">
+                {# <a href="/admin/logout">sair</a> #}
+                <form action="/admin/logout" method="POST">
+                    <button>Sair</button>
+                </form>
             </div>
-        </header>
+        </div>
 
         <div class="admin-primary-block">
             {% block content %}{% endblock %}

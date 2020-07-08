@@ -1,0 +1,20 @@
+{% extends "parts/layout_admin.njk" %}
+
+{% block head %}
+    <title>Minha conta</title>
+{% endblock head %}
+
+{% block content %}
+
+    <form action="/admin/profile?_method=PUT" method="post">
+
+        <div class="create-container register-user-fields profile-fields">
+            <p>Bem vindo {{user.name}}</p>
+            <button type="submit">Salvar</button>
+        </div>
+
+        {% include 'admin/profile-fields.njk' %}
+
+    </form>
+
+{% endblock content %}

@@ -1,0 +1,42 @@
+<div class="fields-user-create">
+
+    <div class="item">
+        <div class="title-line">Nome</div>
+        <div>
+            <input 
+                type="text" 
+                name="name" 
+                class="input-some-text" 
+                value="{{user.name}}" 
+                placeholder="Nome do usuário">
+        </div>
+    </div>
+
+    <div class="item">
+        <div class="title-line">Email</div>
+        <div>
+            <input 
+                type="email" 
+                name="email" 
+                class="input-some-text" 
+                value="{{user.email}}" 
+                placeholder="Email do usuário"
+                onblur="Validate.apply(this, 'isEmail')"
+            >
+        </div>
+    </div>
+</div>
+
+<div class="item user-fields-checkbox">
+    <div>
+        <input 
+            type="checkbox" 
+            name="is_admin"
+            id="teste"
+            {% if user.is_admin %}
+                checked
+            {% endif %}
+        >
+    </div>
+    <div class="title-line">Administrador</div>
+</div>

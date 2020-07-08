@@ -70,7 +70,7 @@ module.exports = {
             let results = await File.create(file)
             const fileId = results.rows[0].id
 
-            results = await Chef.create({...req.body, file_id: fileId})
+            results = await Chef.create({...req.body, user_id: req.session.userId, file_id: fileId})
             const chefId = results.rows[0].id
             
 

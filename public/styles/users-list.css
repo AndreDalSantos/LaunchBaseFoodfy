@@ -1,0 +1,56 @@
+.card-list-users {
+    margin-bottom: 50px;
+}
+
+.list-users-name-container {
+    font-family: helvetica;
+    color: #111;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.list-users-mail-container {
+    font-family: helvetica;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.footer-card-list-users {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    align-items: center;
+}
+
+.footer-card-list-users > a {
+    font-family: helvetica;
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.footer-card-list-users > a:hover {
+    color: rgb(18, 18, 136);
+}
+
+.button-remove {
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    font-family: helvetica;
+    font-weight: bold;
+    color: #f55a5a;
+    font-size: 14px;
+}
+
+.button-remove:hover {
+    color: rgb(197, 29, 29);
+}
+
+.button-remove-false {
+    font-family: helvetica;
+    font-weight: bold;
+    color: #bb7171;
+    font-size: 14px;
+}
