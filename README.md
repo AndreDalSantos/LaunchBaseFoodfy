@@ -1,8 +1,10 @@
 <h1 style="text-align: center">Foodfy</h1>
 
-<img src="./public/Foodfy.gif">
+<div align="center">
+    <img src="./public/Foodfy.gif">
+</div>
 
-<h2>Projeto desenvolvido no curso Launchbase da <a href="https://rocketseat.com.br/launchbase">Rocketseat</a></h2>
+<h3>Projeto desenvolvido no curso Launchbase da <a href="https://rocketseat.com.br/launchbase">Rocketseat</a></h3>
 
 ---
 ## 🔖 Sobre
