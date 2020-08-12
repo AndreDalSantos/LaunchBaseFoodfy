@@ -19,7 +19,11 @@
                 <a href="/about">Sobre</a>
                 <a href="/recipes">Receitas</a>
                 <a href="/all_chefs_views">Chefs</a>
-                <a href="/admin/login">Login</a>
+                {% if userId %}
+                    <a href="/admin">Área exclusiva</a>
+                {% else %}
+                    <a href="/admin/login">Login</a>
+                {% endif %}
                 </div>
             </header>
 

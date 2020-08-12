@@ -1,65 +1,27 @@
-const { date } = require('../../lib/utils')
 const Recipe = require('../models/Recipe')
 const File = require('../models/File')
 const RecipeFile = require('../models/RecipeFile')
 const Chef = require('../models/Chef')
 const User = require('../models/User')
 
+const { showRecipesPaginate } = require('../services/services')
+const { removesEmptyPositionsFromArray } = require('../../lib/utils')
+
+
 module.exports = {
     async index(req, res) {
         try {
-            let { filter, page, limit } = req.query
+            let results = await showRecipesPaginate(req, 12)
 
-            page = page || 1
-            limit = limit || 12
-            let offset = limit * (page - 1)
-    
-            const params = {
-                filter,
-                page,
-                limit,
-                offset
+            results = {
+                ...results,
+                userId: req.session.userId
             }
-    
-            let results = await Recipe.paginate(params)
-            const recipes = results.rows
-    
-            if(recipes[0]){
-    
-                const pagination = {
-                    total: Math.ceil(recipes[0].total / limit),
-                    page
-                }
-    
-                results = await Recipe.selectChefs()
-                const chefs = results.rows
-    
-                let changedRecipe = []
-    
-                for(i = 0; i < recipes.length; i++){
-    
-                    results = await RecipeFile.allFromOneRecipe(recipes[i].id)
-                    let recipeFile = results.rows[0]
-    
-                    results = await File.allFilesFromRecipeFile(recipeFile)
-                    let file = results.rows[0]
-    
-                    file = {
-                        ...file,
-                        src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
-                    }
-    
-                    changedRecipe[i] = {
-                        ...recipes[i],
-                        file
-                    }
-                }
-    
-                return res.render('admin/index', { recipes:changedRecipe, pagination, filter: params.filter, chefs })
-    
-            } else {
-                return res.render('admin/index') 
-            } 
+
+            if(results.recipes)
+                return res.render('admin/index', results)
+            else
+                return res.render('admin/error', { userId: req.session.userId })              
         } catch(err){
             throw new Error(err)
         }
@@ -79,10 +41,6 @@ module.exports = {
         catch(err){
             throw `Error: ${err}`
         }
-
-        // Recipe.selectChefs(function(options){
-        //     return res.render('admin/create', {chefOptions: options})
-        // })
     },
     async post(req, res){
         try {
@@ -98,21 +56,28 @@ module.exports = {
                 return res.send('Please, send at least one image')   
             
             const userId = (await Chef.getUserOfChef(req.body.chef)).rows[0].user_id
-            
-            // console.log(req.body)
-            // console.log(userId)
-            // return res.send('fim')
+
+            let { title, chef: chef_id, ingredients, preparation, information } = req.body
+
+            ingredients = removesEmptyPositionsFromArray(ingredients)
+            preparation = removesEmptyPositionsFromArray(preparation)
+
+            let files = req.files.map(file => ({
+                name: file.filename,
+                path: file.path
+
+            }))
     
-            let results = await Recipe.create(req.body, userId)
+            let results = await Recipe.createRecipe({ title, chef_id, ingredients, preparation, information, user_id: userId })            
             const recipeId = results.rows[0].id
     
-            const filesPromise = req.files.map(file => File.create({
+            const filesPromise = files.map(file => File.create({
                 ...file
             }))
             results = await Promise.all(filesPromise)
     
             const recipeFilesPromise = results.map(fileId => RecipeFile.create({
-                file_id: fileId.rows[0].id,
+                file_id: fileId,
                 recipe_id: recipeId
             }))
             await Promise.all(recipeFilesPromise)
@@ -127,10 +92,9 @@ module.exports = {
     async show(req, res){
         try{
             if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id)) {
-                let results = await Recipe.find(req.params.id)
-                const recipe = results.rows[0]
+                const recipe = await Recipe.find(req.params.id)
         
-                if(!recipe) return res.send('Recipe not found')
+                if(!recipe) return res.render('admin/error', { userId: req.session.userId }) 
         
                 results = await Recipe.getChefName(recipe.chef_id)
                 const chef = results.rows[0]
@@ -153,24 +117,16 @@ module.exports = {
                 return res.render('admin/view_recipe', { recipe, chef, files})
             }
             else 
-                return res.send('Recipe not found')
+                return res.render('admin/error', { userId: req.session.userId }) 
         } catch(err){
             throw new Error(err)
         }
-        Recipe.find(req.params.id, function(recipe){
-            if(!recipe) return res.send('Recipe not found')
-
-            recipe.created_at = date(recipe.created_at).format
-
-            return res.render('admin/view_recipe', { recipe })
-        })
     },
     async edit(req, res){
         try {
 
             if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id)){
-                let results = await Recipe.find(req.params.id)
-                const recipe = results.rows[0]
+                const recipe = await Recipe.find(req.params.id)
         
                 if(!recipe) return res.render('admin/index', {
                     error: 'Receita inexistente.'
@@ -181,7 +137,7 @@ module.exports = {
                 })
 
                 results = await Recipe.find(req.params.id)
-                const ownerUserId = results.rows[0].user_id
+                const ownerUserId = results.user_id
 
                 if(userLogged.is_admin && userLogged !== ownerUserId) 
                     results = await Recipe.selectChefsFromUser(ownerUserId)
@@ -231,10 +187,10 @@ module.exports = {
                 // removed files -> array de id's dos arquivos removidos
                 removedFiles.splice(lastIndex, 1)
 
-                const removedRecipeFilePromise = removedFiles.map(id => RecipeFile.delete(id))
+                const removedRecipeFilePromise = removedFiles.map(id => RecipeFile.deleteRecipeFile(id))
                 await Promise.all(removedRecipeFilePromise)
 
-                const removedFilesPromise = removedFiles.map(id => File.delete(id))
+                const removedFilesPromise = removedFiles.map(id => File.deleteFile(id))
                 await Promise.all(removedFilesPromise)
             }
 
@@ -246,21 +202,30 @@ module.exports = {
                 if(totalFiles <= 5){
                     let results = ''
                     const filesPromise = req.files.map(file => File.create({
-                        ...file
+                        name: file.filename,
+                        path: file.path
                     }))
                     results = await Promise.all(filesPromise)
             
                     const recipeFilesPromise = results.map(fileId => RecipeFile.create({
-                        file_id: fileId.rows[0].id,
+                        file_id: fileId,
                         recipe_id: req.body.id
                     }))
                     await Promise.all(recipeFilesPromise) 
                 }              
             }
-        
-            await Recipe.update(req.body)
 
-            return res.redirect(`/admin/recipes/${req.body.id}`)
+            let { title, chef: chef_id, ingredients, preparation, information } = req.body
+
+            ingredients = removesEmptyPositionsFromArray(ingredients)
+            preparation = removesEmptyPositionsFromArray(preparation)
+        
+            await Recipe.update({ title, chef: chef_id, ingredients, preparation, information, id: req.body.id })
+
+            return res.render('admin/success', {
+                route: `/admin/recipes/${req.body.id}`,
+                message: 'Receita atualizada com sucesso!'
+            })
 
 
         } catch (err) {
@@ -278,20 +243,20 @@ module.exports = {
                 filesIds[i] = recipeFiles[i].file_id
             }
 
-            const removedRecipeFilePromise = filesIds.map(id => RecipeFile.delete(id))
+            const removedRecipeFilePromise = filesIds.map(id => RecipeFile.deleteRecipeFile(id))
             await Promise.all(removedRecipeFilePromise)
 
-            const removedFilesPromise = filesIds.map(id => File.delete(id))
+            const removedFilesPromise = filesIds.map(id => File.deleteFile(id))
             await Promise.all(removedFilesPromise)
 
             await Recipe.delete(req.body.id)
-            return res.redirect('/admin/recipes/create')
+            return res.render('admin/success', {
+                route: '/admin',
+                message: 'Receita deletada com sucesso!'
+            })
 
         } catch (err) {
             throw new Error(err)
         }
-        // Recipe.delete(req.body.id, function(){
-        //     return res.redirect('/admin/recipes')
-        // })
     }
 }

@@ -1,0 +1,17 @@
+<div class="order-success">
+    <div class="success-lottie"></div>
+    <h2>{{message}}</h2>
+    <a href="{{route}}">Voltar</a>
+</div>
+
+<script src="/lottie.min.js"></script>
+<script>
+    const element = document.querySelector('.success-lottie')
+    lottie.loadAnimation({
+        container: element, // the dom element that will contain the animation
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        path: '/7266-success (1).json' // the path to the animation json
+    }).setSpeed(1);
+</script>

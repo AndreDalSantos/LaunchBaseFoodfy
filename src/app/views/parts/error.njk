@@ -1,0 +1,20 @@
+<div class="order-error">
+    <div class="error-lottie"></div>
+    <h2>Desculpe</h2>
+    <p>
+        Página ou parâmetros inexistentes.
+    </p>
+    <a href="#" onclick="history.back()">Voltar</a>
+</div>
+
+<script src="/lottie.min.js"></script>
+<script>
+    const element = document.querySelector('.error-lottie')
+    lottie.loadAnimation({
+        container: element, // the dom element that will contain the animation
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        path: '/22893-error-animation.json' // the path to the animation json
+    }).setSpeed(1);
+</script>

@@ -9,7 +9,7 @@ const ProfileController = require('../app/controllers/ProfileController')
 
 const UserValidator = require('../app/validators/user')
 const SessionValidator = require('../app/validators/session')
-const ChefValidator = require('../app/validators/chef')
+const RecipeValidator = require('../app/validators/recipe')
 
 const { onlyAdmin, checkIfAdminOrMe, checkIfAdminOrMeToUpdateRecipes, notMe } = require('../app/middlewares/session')
 
@@ -17,8 +17,8 @@ routes.get('/', (req, res) => {
     return res.redirect('/admin/recipes')
 })
 
-routes.get("/recipes", SessionValidator.isReqSession, recipes.index); // Mostrar a lista de receitas
-routes.get("/recipes/create", /*ChefValidator.checkIfThereAreChefs, */ SessionValidator.isReqSession, recipes.create); // Mostrar formulário de nova receita
+routes.get("/recipes", RecipeValidator.checkIfThereAreRecipes, SessionValidator.isReqSession, recipes.index); // Mostrar a lista de receitas
+routes.get("/recipes/create", SessionValidator.isReqSession, recipes.create); // Mostrar formulário de nova receita
 routes.get("/recipes/:id", SessionValidator.isReqSession, recipes.show); // Exibir detalhes de uma receita
 routes.get("/recipes/:id/edit", checkIfAdminOrMeToUpdateRecipes, SessionValidator.isReqSession, recipes.edit); // Mostrar formulário de edição de receita
 

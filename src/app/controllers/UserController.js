@@ -1,5 +1,11 @@
+const { hash } = require('bcryptjs')
+const crypto = require('crypto')
+const mailer = require('../../lib/mailer')
+
+const { indexPaginate } = require('../services/services')
+
 const User = require('../models/User')
-const { indexPaginate } = require('../../lib/utils2')
+
 
 module.exports = {
     registerForm(req, res) {
@@ -8,21 +14,12 @@ module.exports = {
     async list(req, res){
         try {
 
-            const { users, filter, page, limit, offset } = await indexPaginate(req, res)
-
+            const { users, pagination, filter } = await indexPaginate(req.query, 12)
     
-            if(users[0]){
-    
-                const pagination = {
-                    total: Math.ceil(users[0].total / limit),
-                    page
-                }                
-    
+            if(users)
                 return res.render('admin/list', { users, pagination, filter, userId: req.session.userId })
-    
-            } else {
-                return res.render('admin/list')
-            } 
+            else
+                return res.render('admin/error', { userId: req.session.userId })
 
         } catch(err){
             console.error(err)
@@ -36,7 +33,33 @@ module.exports = {
         try{
             let results = await User.checkIfYouAreTheFirstUser()
 
-            const userId = await User.create(req.body)
+            
+            let password = crypto.randomBytes(20).toString('hex')
+            password = await hash(password, 8)
+            
+            let isAdmin = req.body.is_admin ? true : false
+            
+            if( !results )              
+                isAdmin = true 
+            
+            const newUser = {
+                ...req.body,
+                password,
+                is_admin: isAdmin
+            }
+
+            const userId = await User.create(newUser)
+
+            await mailer.sendMail({
+                to: newUser.email,
+                from: 'no-reply@foodfy.com.br',
+                subject: 'Sua senha provisória no Foodfy!',
+                html: `                
+                    <h2>Sua senha provisória no Foodfy!</h2>
+                    <p>abaixo sua senha provisória no sistema Foodfy - atere-a assim que possível</p>
+                    <p>Senha: </p><p style="font-weight: bold">${password}</p>
+                `,
+            })
 
             if ( !results )
                 req.session.userId = userId
@@ -59,11 +82,12 @@ module.exports = {
             })
 
             if(!user)
-                return res.render('admin/user-edit', {
-                    error: 'Usuário inexistente'
+                return res.render('admin/error', {
+                    error: "Usuário inexistente!"
                 })
             
             return res.render('admin/user-edit', { user, id })
+
         } catch (err) {
             console.error(err)
             return res.render('admin/user-edit', {
@@ -86,27 +110,18 @@ module.exports = {
                 is_admin: isAdmin
             })
 
-            const { users, filter, page, limit, offset } = await indexPaginate(req, res)
-
+            const { users, pagination, filter } = await indexPaginate(req.query, 12)
     
-            if(users[0]){
-    
-                const pagination = {
-                    total: Math.ceil(users[0].total / limit),
-                    page
-                }                
-    
+            if(users)
                 return res.render('admin/list', { 
                     users, 
                     pagination, 
                     filter, 
                     userId: req.session.userId,
-                    success: 'Conta atualizada com sucesso'
+                    success: 'Conta atualizada com sucesso' 
                 })
-    
-            } else {
-                return res.render('admin/list')
-            } 
+            else
+                return res.render('admin/error', { userId: req.session.userId })   
 
         } catch (err) {
             console.error(err) 
@@ -118,15 +133,9 @@ module.exports = {
 
             await User.delete(req.body.id)
 
-            const { users, filter, page, limit, offset } = await indexPaginate(req, res)
+            const { users, filter, pagination } = await indexPaginate(req.query, 12)
 
-            if(users[0]){
-
-                const pagination = {
-                    total: Math.ceil(users[0].total / limit),
-                    page
-                }      
-
+            if(users[0])
                 return res.render('admin/list', { 
                     users, 
                     pagination, 
@@ -134,11 +143,10 @@ module.exports = {
                     userId: req.session.userId, 
                     success: 'Conta deletada com sucesso'
                 })
-
-            } else {
-                return res.render('admin/list')
-            }
-
+            else
+                return res.render('admin/error', {
+                    error: "Usuário inexistente!"
+                })            
 
         } catch (err) {
             console.error(err)

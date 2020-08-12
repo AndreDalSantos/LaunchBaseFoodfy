@@ -8,10 +8,11 @@ module.exports = {
                 where: { id: req.session.userId }
             })
 
-            if(!user)
+            if(!user){
                 return res.render('admin/user-edit', {
                     error: 'Usuário inexistente'
                 })
+            }
             
             return res.render('admin/profile', { user })
         } catch (err) {
@@ -32,8 +33,8 @@ module.exports = {
                 email
             })
 
-            return res.render('admin/profile', {
-                user: req.body,
+            return res.render('admin/success', {
+                route: '/admin/users',
                 success: 'Conta atualizada com sucesso.'
             })
 

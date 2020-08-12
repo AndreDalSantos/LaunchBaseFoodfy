@@ -1,41 +1,20 @@
 const db = require('../../config/db')
 const fs = require('fs')
-//const { delete } = require('./Recipe')
+
+const Base = require('./Base')
+
+Base.init({ table: 'files' })
 
 module.exports = {
-    create(data){
-        const query = `
-            INSERT INTO files (
-                name,
-                path
-            ) VALUES ($1, $2)
-            RETURNING id
-        `
-
-        const values = [
-            data.filename,
-            data.path
-        ]
-
-        return db.query(query, values)
-    },
+    ...Base,
     allFilesFromRecipeFile(recipeFile){
-        //console.log(recipeFile)
         const query = `
             SELECT * FROM files
             WHERE files.id = $1
         `
         return db.query(query, [recipeFile.file_id])
     },
-    fileFromChef(file_id){
-        const query = `
-            SELECT * FROM files
-            WHERE files.id = $1
-        `
-
-        return db.query(query, [file_id])
-    },
-    async delete(id){
+    async deleteFile(id){
         try {
             const results = await db.query(`SELECT * FROM files WHERE id = $1`, [id])
             const file = results.rows[0]
@@ -48,5 +27,13 @@ module.exports = {
         } catch (err) {
             throw new Error(err) 
         }
+    },
+    fileFromChef(file_id){
+        const query = `
+            SELECT * FROM files
+            WHERE files.id = $1
+        `
+
+        return db.query(query, [file_id])
     }
 }

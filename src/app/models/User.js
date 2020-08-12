@@ -6,11 +6,16 @@ const Chef = require('./Chef')
 const Recipe = require('./Recipe')
 const File = require('./File')
 
+const Base = require('./Base')
+
+Base.init({ table: 'users' })
+
 module.exports = {
+    ...Base,
     async checkIfYouAreTheFirstUser(){
         try{
             const thereAreAnyUser = (await db.query(`SELECT * FROM users`)).rows[0]
-            // console.log(thereAreAnyUser)
+
             if(thereAreAnyUser)
                 return true
 
@@ -40,86 +45,6 @@ module.exports = {
         } catch(err){
             console.error(err)
         }
-    },
-    async create(data){
-        try{
-            let results = await db.query(`SELECT * FROM users`)        
-            results = results.rows[0]   
-            
-            let isAdmin = data.is_admin ? true : false
-        
-            if( !results )              
-                isAdmin = true            
-
-            const query = `
-                INSERT INTO users (
-                    name,
-                    email,
-                    password,
-                    is_admin
-                ) VALUES ($1, $2, $3, $4)
-                RETURNING id
-            `
-                
-            // const password = Math.random().toString(36).slice(-10)
-            const password = crypto.randomBytes(20).toString('hex')
-            const passwordHash = await hash(password, 8)
-
-            const values = [
-                data.name,
-                data.email,
-                passwordHash,
-                isAdmin
-            ]
-
-            results = await db.query(query, values)
-
-            await mailer.sendMail({
-                to: data.email,
-                from: 'no-reply@foodfy.com.br',
-                subject: 'Sua senha provisória no Foodfy!',
-                html: `                
-                    <h2>Sua senha provisória no Foodfy!</h2>
-                    <p>abaixo sua senha provisória no sistema Foodfy - atere-a assim que possível</p>
-                    <p>Senha: </p><p style="font-weight: bold">${password}</p>
-                `,
-            })
-
-            return results.rows[0].id
-
-        } catch(err) {
-            console.error(err)            
-        }
-    },
-    paginate(params){ 
-        const { filter, limit, offset } = params
-
-        let query = "",
-        filterQuery = "",
-            totalQuery = `(
-                SELECT count(*) FROM users
-            ) AS total`        
-
-        if (filter){
-
-            filterQuery = `
-            WHERE users.name ILIKE '%${filter}%'`
-
-            totalQuery = `(
-                SELECT count(*) FROM users
-                ${filterQuery}
-            ) AS total`
-
-        }        
-
-        query = `
-        SELECT users.*, ${totalQuery}
-        FROM users
-        ${filterQuery}
-        ORDER BY updated_at DESC
-        LIMIT $1 OFFSET $2`
-
-        return db.query(query, [limit, offset])
     },
     async update(id, fields){
         let query = `UPDATE users SET`
@@ -180,12 +105,12 @@ module.exports = {
 
         // 7 - deletar os arquivos dos avatares do banco de dados e da pasta public.
         for(let i = 0; i < chefsFilesId.length; i++){
-            await File.delete(chefsFilesId[i])
+            await File.deleteFile(chefsFilesId[i])
         }
 
         // 8 - deletar as imagens das receitas do banco de dados
         for(let i = 0; i < filesIds.length; i++){
-            await File.delete(filesIds[i])
+            await File.deleteFile(filesIds[i])
         }
 
         return

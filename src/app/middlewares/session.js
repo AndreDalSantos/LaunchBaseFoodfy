@@ -3,7 +3,7 @@ const Chef = require('../models/Chef')
 const Recipe = require('../models/Recipe')
 const RecipeFile = require('../models/RecipeFile')
 const File = require('../models/File')
-const { indexPaginate } = require('../../lib/utils2')
+const { indexPaginate } = require('../services/services')
 
 async function onlyAdmin(req, res, next){
     let results = await User.checkIfYouAreTheFirstUser()
@@ -15,7 +15,7 @@ async function onlyAdmin(req, res, next){
     
         if( !userLogged.is_admin ){
 
-            const { users, filter, page, limit, offset } = await indexPaginate(req, res)
+            const { users, filter, page, limit, offset } = await indexPaginate(req.query)
 
             if(users[0]){
 
@@ -117,61 +117,70 @@ async function checkIfAdminOrMeToUpdateChefs(req, res, next){
     const userLogged = await User.findOne({
             where: { id: req.session.userId }
         })
-    
-    const checkMyId = (await Chef.getUserId(id)).rows[0].user_id
 
-    if(userLogged.id !== checkMyId && userLogged.is_admin === false){
-
-        let { filter, page, limit } = req.query
-
-            page = page || 1
-            limit = limit || 12
-            let offset = limit * (page - 1)
+    let checkIfChefExists = ''
+    if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id))
+        checkIfChefExists = await Chef.find(id)
+    else 
+        checkIfChefExists = false
     
-            const params = {
-                filter,
-                page,
-                limit,
-                offset
-            }
-    
-            let results = await Chef.paginate(params)
-            const chefs = results.rows
-    
-            if(chefs[0]){
-    
-                const pagination = {
-                    total: Math.ceil(chefs[0].total / limit),
-                    page
-                }
+    if(checkIfChefExists){
 
-                let fileChef = []
-
-                for( i = 0; i < chefs.length; i++ ) {
-                    fileChef[i] = (await File.fileFromChef(chefs[i].file_id)).rows[0]
-
-                    chefs[i] = {
-                        ...chefs[i],
-                        avatar_url: `${req.protocol}://${req.headers.host}${fileChef[i].path.replace("public", "")}`
-                    }
-                }
+        const checkMyId = (await Chef.getUserId(id)).rows[0].user_id
     
-                return res.render('chefs/index', { 
-                    chefs, 
-                    pagination, 
+        if(userLogged.id !== checkMyId && userLogged.is_admin === false){
+    
+            let { filter, page, limit } = req.query
+    
+                page = page || 1
+                limit = limit || 12
+                let offset = limit * (page - 1)
+        
+                const params = {
                     filter,
-                    error: 'Somente Administradores podem modificar informações de outros usuários' 
-                })
+                    page,
+                    limit,
+                    offset
+                }
+        
+                let results = await Chef.paginate(params)
+                const chefs = results.rows
+        
+                if(chefs[0]){
+        
+                    const pagination = {
+                        total: Math.ceil(chefs[0].total / limit),
+                        page
+                    }
     
-            } else {
-                return res.render('chefs/index')
-            } 
+                    let fileChef = []
+    
+                    for( i = 0; i < chefs.length; i++ ) {
+                        fileChef[i] = (await File.fileFromChef(chefs[i].file_id)).rows[0]
+    
+                        chefs[i] = {
+                            ...chefs[i],
+                            avatar_url: `${req.protocol}://${req.headers.host}${fileChef[i].path.replace("public", "")}`
+                        }
+                    }
+        
+                    return res.render('chefs/index', { 
+                        chefs, 
+                        pagination, 
+                        filter,
+                        error: 'Somente Administradores podem modificar informações de outros usuários' 
+                    })
+        
+                } else {
+                    return res.render('chefs/index')
+                } 
+        }
+        next()
 
-        return res.render('chefs/index', {
-            error: 'Somente Administradores podem modificar informações de outros usuários' 
-        })
+    } else {
+        return res.render('admin/error', { userId: req.session.userId })
     }
-    next()
+    
 }
 
 async function checkIfAdminOrMeToUpdateRecipes(req, res, next){
@@ -185,76 +194,83 @@ async function checkIfAdminOrMeToUpdateRecipes(req, res, next){
     const userLogged = await User.findOne({
             where: { id: req.session.userId }
         })
-    
-    const checkMyId = (await Recipe.getUserId(id)).rows[0].user_id
 
-    if(userLogged.id !== checkMyId && userLogged.is_admin === false){
+    let checkIfRecipeExists = ''
+
+    if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id))
+        checkIfRecipeExists = await Recipe.find(id)
+    else 
+        checkIfRecipeExists = false
+    
+    if(checkIfRecipeExists){
+        const checkMyId = (await Recipe.getUserId(id)).rows[0].user_id
+
+        if(userLogged.id !== checkMyId && userLogged.is_admin === false){
+            
+            let { filter, page, limit } = req.query
+
+                page = page || 1
+                limit = limit || 12
+                let offset = limit * (page - 1)
         
-        let { filter, page, limit } = req.query
-
-            page = page || 1
-            limit = limit || 12
-            let offset = limit * (page - 1)
-    
-            const params = {
-                filter,
-                page,
-                limit,
-                offset
-            }
-    
-            let results = await Recipe.paginate(params)
-            const recipes = results.rows
-    
-            if(recipes[0]){
-    
-                const pagination = {
-                    total: Math.ceil(recipes[0].total / limit),
-                    page
+                const params = {
+                    filter,
+                    page,
+                    limit,
+                    offset
                 }
-    
-                results = await Recipe.selectChefs()
-                const chefs = results.rows
-    
-                let changedRecipe = []
-    
-                for(i = 0; i < recipes.length; i++){
-    
-                    results = await RecipeFile.allFromOneRecipe(recipes[i].id)
-                    let recipeFile = results.rows[0]
-    
-                    results = await File.allFilesFromRecipeFile(recipeFile)
-                    let file = results.rows[0]
-    
-                    file = {
-                        ...file,
-                        src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+        
+                let results = await Recipe.paginate(params)
+                const recipes = results.rows
+        
+                if(recipes[0]){
+        
+                    const pagination = {
+                        total: Math.ceil(recipes[0].total / limit),
+                        page
                     }
-    
-                    changedRecipe[i] = {
-                        ...recipes[i],
-                        file
+        
+                    results = await Recipe.selectChefs()
+                    const chefs = results.rows
+        
+                    let changedRecipe = []
+        
+                    for(i = 0; i < recipes.length; i++){
+        
+                        results = await RecipeFile.allFromOneRecipe(recipes[i].id)
+                        let recipeFile = results.rows[0]
+        
+                        results = await File.allFilesFromRecipeFile(recipeFile)
+                        let file = results.rows[0]
+        
+                        file = {
+                            ...file,
+                            src: `${req.protocol}://${req.headers.host}${file.path.replace("public", "")}`
+                        }
+        
+                        changedRecipe[i] = {
+                            ...recipes[i],
+                            file
+                        }
                     }
-                }
-    
-                return res.render('admin/index', { 
-                    recipes:changedRecipe, 
-                    pagination, filter: 
-                    params.filter, 
-                    chefs,
-                    error: 'Somente Administradores podem modificar informações de outros usuários'
-                })
-    
-            } else {
-                return res.render('admin/index') 
-            } 
-
-        // return res.render('admin/index', {
-        //     error: 'Somente Administradores podem modificar informações de outros usuários' 
-        // })
+        
+                    return res.render('admin/index', { 
+                        recipes:changedRecipe, 
+                        pagination, filter: 
+                        params.filter, 
+                        chefs,
+                        error: 'Somente Administradores podem modificar informações de outros usuários'
+                    })
+        
+                } else {
+                    return res.render('admin/index') 
+                } 
+        }
+        
+        next()
+    } else {
+        return res.render('admin/error', { userId: req.session.userId })
     }
-    
-    next()
 }
 
 async function notMe(req, res, next){

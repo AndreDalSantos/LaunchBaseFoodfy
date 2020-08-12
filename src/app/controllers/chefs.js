@@ -3,48 +3,19 @@ const Chef = require('../models/Chef')
 const File = require('../models/File')
 const RecipeFile = require('../models/RecipeFile')
 
+const { showChefsPaginate } = require('../services/services')
+
+
 module.exports = {
     async index(req, res){
         try {
-            let { filter, page, limit } = req.query
+            let { chefs, pagination, filter } = await showChefsPaginate(req, 12)
 
-            page = page || 1
-            limit = limit || 12
-            let offset = limit * (page - 1)
-    
-            const params = {
-                filter,
-                page,
-                limit,
-                offset
-            }
-    
-            let results = await Chef.paginate(params)
-            const chefs = results.rows
-    
-            if(chefs[0]){
-    
-                const pagination = {
-                    total: Math.ceil(chefs[0].total / limit),
-                    page
-                }
-
-                let fileChef = []
-
-                for( i = 0; i < chefs.length; i++ ) {
-                    fileChef[i] = (await File.fileFromChef(chefs[i].file_id)).rows[0]
-
-                    chefs[i] = {
-                        ...chefs[i],
-                        avatar_url: `${req.protocol}://${req.headers.host}${fileChef[i].path.replace("public", "")}`
-                    }
-                }
-    
+            if(chefs)
                 return res.render('chefs/index', { chefs, pagination, filter })
-    
-            } else {
-                return res.render('chefs/index')
-            } 
+            else
+                return res.render('admin/error', { userId: req.session.userId })                
+             
         } catch(err){
             throw new Error(err)
         }  
@@ -65,16 +36,16 @@ module.exports = {
             if(!req.files)
                 return res.send('Please, send one image')
             
-            const file = req.files[0]
+            const { filename: name, path } = req.files[0]
             
-            let results = await File.create(file)
-            const fileId = results.rows[0].id
+            const fileId = await File.create({ name, path })
 
-            results = await Chef.create({...req.body, user_id: req.session.userId, file_id: fileId})
-            const chefId = results.rows[0].id
-            
+            const chefId = await Chef.create({name: req.body.name, user_id: req.session.userId, file_id: fileId})            
 
-            return res.redirect(`/chefs/${chefId}/edit`)
+            return res.render('admin/success', {
+                route: `/chefs/${chefId}/edit`,
+                message: 'Chef criado com sucesso!'
+            })
 
 
         } catch(err){
@@ -86,15 +57,15 @@ module.exports = {
 
             if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id)){
 
-                let results = await Chef.find(req.params.id)
+                let results = await Chef.findAll(req.params.id)
                 let chef = results.rows[0]
 
-                if(!chef) return res.send('chef not found')
+                if(!chef) return res.render('admin/error', { userId: req.session.userId })                
+
 
                 chef.created_at = date(chef.created_at).format
 
-                results = await File.fileFromChef(chef.file_id)
-                let file = results.rows[0] 
+                let file = await File.find(chef.file_id)
 
                 file = {
                     ...file,
@@ -139,7 +110,7 @@ module.exports = {
                 return res.render('chefs/view_chef', { chef, recipes })
 
             } else {
-                return res.send('Chef not found')
+                return res.render('admin/error', { userId: req.session.userId })
             }
 
         } catch(err){
@@ -151,16 +122,12 @@ module.exports = {
         try {
             if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id)){
 
-                let results = await Chef.find(req.params.id)
+                let results = await Chef.findAll(req.params.id)
                 const chef = results.rows[0]
 
-                if(!chef)
-                    return res.send('chef not found')
+                chef.created_at = date(chef.created_at).format 
 
-                chef.created_at = date(chef.created_at).format
-
-                results = await File.fileFromChef(chef.file_id)
-                let file = results.rows[0]
+                let file = await File.find(chef.file_id)
 
                 file = {
                     ...file,
@@ -169,9 +136,8 @@ module.exports = {
 
                 return res.render('chefs/edit', { chef, files: file })
 
-
             } else
-                return res.send('chef not found') 
+                return res.render('admin/error', { userId: req.session.userId }) 
 
         } catch(err) {
             throw new Error(err)
@@ -194,8 +160,8 @@ module.exports = {
             changeFile = false     
 
         if(req.files != 0){
-            results = await File.create(req.files[0])
-            newFilesId = results.rows[0].id
+            const { filename: name, path } = req.files[0]            
+            newFilesId = await File.create({ name, path })
             changeFile = true
         }
 
@@ -223,20 +189,24 @@ module.exports = {
             const lastIndex = removedFiles.length - 1
             removedFiles.splice(lastIndex, 1)
             
-            const removedFilesPromise = await File.delete(Number(removedFiles))
+            const removedFilesPromise = await File.deleteFile(Number(removedFiles))
         }
 
-        return res.redirect(`/chefs`)
-        return res.redirect(`/chefs/${req.body.id}/edit`)
+        return res.render('admin/success', {
+            route: `/chefs/${req.body.id}`,
+            message: 'Chef atualizado com sucesso!'
+        })
     },
     async delete(req, res){
-
         const fileId = ((await Chef.findFile(req.body.id)).rows[0]).file_id
-        
-        await Chef.delete(req.body.id)
-        await File.delete(fileId)
 
-        return res.redirect('/chefs')
+        await Chef.delete(req.body.id)
+        await File.deleteFile(fileId)
+
+        return res.render('admin/success', {
+            route: `/chefs`,
+            message: 'Chef excluído com sucesso!'
+        })
 
     }
 }

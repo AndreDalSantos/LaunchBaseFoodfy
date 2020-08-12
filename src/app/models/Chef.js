@@ -1,28 +1,14 @@
 const { date } = require('../../lib/utils')
 const db = require('../../config/db')
-const chef = require('../validators/chef')
+// const chef = require('../validators/chef')
+
+const Base = require('./Base')
+
+Base.init({ table: 'chefs' })
 
 module.exports = {
-
-    create(data){
-        const query = `
-            INSERT INTO chefs (
-                file_id,
-                name,
-                user_id
-            ) VALUES ($1, $2, $3)
-            RETURNING id
-        `
-
-        const values = [
-            data.file_id,
-            data.name,
-            data.user_id
-        ]
-
-        return db.query(query, values)
-    },
-    find(id){
+    ...Base,
+    findAll(id){
         const query = `
             SELECT chefs.*, (SELECT count(*) FROM chefs) AS total, count(recipes) AS total_recipes
             FROM chefs
@@ -73,10 +59,6 @@ module.exports = {
 
         return db.query(query, values)
     },
-    delete(id){
-        const query = `DELETE FROM chefs WHERE id = $1`
-        db.query(query, [id])
-    },
     getRecipes(id){
 
         query = `
@@ -85,62 +67,17 @@ module.exports = {
         `
 
         return db.query(query, [id])
-
-        // db.query(query, [id], function(err, results){
-        //     if(err) `Database error ${err}`
-
-        //     callback(results.rows)
-        // })
-    },
-    paginate(params){ 
-        const { filter, limit, offset } = params
-
-        let query = "",
-        filterQuery = "",
-            totalQuery = `(
-                SELECT count(*) FROM chefs
-            ) AS total`        
-
-        if (filter){
-
-            filterQuery = `
-            WHERE chefs.name ILIKE '%${filter}%'`
-
-            totalQuery = `(
-                SELECT count(*) FROM chefs
-                ${filterQuery}
-            ) AS total`
-
-        }        
-
-        query = `
-        SELECT chefs.*, ${totalQuery}
-        FROM chefs
-        ${filterQuery}
-        ORDER BY updated_at DESC
-        LIMIT $1 OFFSET $2`
-
-        return db.query(query, [limit, offset])
-
-        // db.query(query, [limit, offset], function(err, results){
-        //     if(err) throw `database error ${err}`
-        //     callback(results.rows)
-        // })
-    },
+    },    
     getUserOfChef(chef_id){
-    return db.query(`
-        SELECT user_id FROM chefs
-        WHERE id = $1
-        `, [chef_id])
+        return db.query(`SELECT user_id FROM chefs WHERE id = $1`, [chef_id])
     },
-    // async checkIfExistsAnyChef(userId){
-    //     const results = (await db.query('SELECT * FROM chefs WHERE user_id = $1', [userId])).rows[0]
-
-    //     if(results) return true
-
-    //     return false
-    // },
     getUserId(chefId){
         return db.query(`SELECT user_id FROM chefs WHERE id = $1`,[chefId])
     }
+    // async checkIfExistsAnyChef(){
+    //     const chefs = await db.query(`SELECT * FROM chefs`)
+
+    //     if(!chefs.rows[0]) return false
+    //     return true
+    // }
 }

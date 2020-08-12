@@ -1,13 +1,14 @@
-// const Chef = require('../models/Chef')
+const Chef = require('../models/Chef')
 
-// function checkIfThereAreChefs(req, res, next){
-//     const thereAreChef = Chef.checkIfExistsAnyChef(req.session.userId)
-//     if(!thereAreChef)
-//         return res.redirect('/chefs/create')
+async function checkIfThereAreChefs(req, res, next){
+    const thereAreChef = await Chef.checkIfThereIsAtLeastOne()
+    
+    if(!thereAreChef)
+        return res.redirect('/chefs/create')
 
-//     next()
-// }
+    next()
+}
 
-// module.exports = {
-//     checkIfThereAreChefs
-// }
+module.exports = {
+    checkIfThereAreChefs
+}

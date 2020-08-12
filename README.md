@@ -1,31 +1,29 @@
 <h1 style="text-align: center">Foodfy</h1>
 
-<img src="./public/imagens2/f1.png">
-<img src="./public/imagens2/f2.png">
-<img src="./public/imagens2/f3.png">
+<img src="./public/Foodfy.gif">
 
 <h2>Projeto desenvolvido no curso Launchbase da <a href="https://rocketseat.com.br/launchbase">Rocketseat</a></h2>
 
 ---
-Descrição: 
- - Sistema de cadastro e visualização de receitas.
- - Admin: Pode fazer o cadastro e edição de receitas.
- - Users: Podem visualizar receitas.
+## 🔖 Sobre
+
+O **Foodfy** consiste em uma aplicação onde um usuário logado (área exclusiva) pode cadastrar chefs com nome e um avatar para este e também receitas com título da receita, igredientes, modo de preparo, outras informações e imagens para esta receita. Na área de visitantes, um visitante pode visualizar uma listagem das receitas cadastradas, e também visualizar detalhes de uma receita escolhida como, imagens, ingredientes, modo de preparo, informações e o nome do autor da receita.
+
 ---
 
-Tecnologias utilizadas:
+## 🚀 Tecnologias utilizadas
 - JavaScript
 - NodeJs
 - CSS
 - HTML
-- Express
-- Nunjucks
+- Postgresql
+
 ---
 
-Download do projeto:
+## 📁 Download e instalação do projeto:
 
 ```bash
-# clonar o projeto
+# clonar o projeto do repositório
 $ git clone https://github.com/AndreDalSantos/Foodfy.git
 
 # entrar na pasta do projeto
@@ -36,6 +34,8 @@ $ npm install
 
 # Iniciar o projeto 
 $ npm start
-
-# OBS: servidor configurado na porta 5000
 ```
+
+### Observações
+ - Criar um banco de dados no Postgres conforme código do arquivo 'Database.sql'
+ - No arquivo 'config/db.js' estão as configurações do banco de dados usado neste projeto.

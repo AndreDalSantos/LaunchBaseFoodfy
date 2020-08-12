@@ -51,7 +51,13 @@ $$ LANGUAGE plpgsql;
 
 -- TRIGGER para chamar a função no postgres
 CREATE TRIGGER set_timestamp
-BEFORE UPDATE ON products
+BEFORE UPDATE ON chefs
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+-- TRIGGER para chamar a função no postgres
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON recipes
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
