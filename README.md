@@ -24,7 +24,7 @@ O **Foodfy** consiste em uma aplicação onde um usuário logado (área exclusiv
 
 ```bash
 # clonar o projeto do repositório
-$ git clone https://github.com/AndreDalSantos/Foodfy.git
+$ git clone https://github.com/AndreDalSantos/LaunchBaseFoodfy.git
 
 # entrar na pasta do projeto
 $ cd Foodfy
