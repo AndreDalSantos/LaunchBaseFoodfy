@@ -35,7 +35,7 @@ module.exports = {
 
             
             let password = crypto.randomBytes(20).toString('hex')
-            password = await hash(password, 8)
+            const passwordHashed = await hash(password, 8)
             
             let isAdmin = req.body.is_admin ? true : false
             
@@ -44,7 +44,7 @@ module.exports = {
             
             const newUser = {
                 ...req.body,
-                password,
+                password: passwordHashed,
                 is_admin: isAdmin
             }
 

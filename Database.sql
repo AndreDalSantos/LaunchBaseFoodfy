@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS launchstoredb;
-CREATE DATABASE launchstoredb;
+DROP DATABASE IF EXISTS foodfy;
+CREATE DATABASE foodfy;
 
 CREATE TABLE "recipes" (
   "id" SERIAL PRIMARY KEY,

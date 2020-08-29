@@ -58,7 +58,7 @@ $ npm install
     # Executar o seed
     $ node seed.js
 ```
-- Assim serão criados alguns usuários, chefs e receitas para testes. Os arquivos de imagens para os avatares dos chefs e imagens das receitas estão em '/public/images' e podem ser atribuidos até 10 chefs e até 30 receitas.
+- Assim serão criados alguns usuários, chefs e receitas para testes. Os arquivos de imagens para os avatares dos chefs e imagens das receitas estão em '/public/images' e podem ser atribuidos até 10 chefs e até 30 receitas. A senha padrão para os usuários é '111'.
 
 ---
 
