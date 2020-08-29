@@ -8,22 +8,22 @@ const Recipe = require('../models/Recipe')
 module.exports = {
     async indexPaginate(data, maxLimit){
         let { filter, page, limit } = data
-    
+        
         page = page || 1
         limit = limit || maxLimit
         let offset = limit * (page - 1)
-
+        
         let users = []
-
+        
         if(!(!isNaN(parseFloat(page)) && isFinite(page))) return {}
-    
+        
         const params = {
             filter,
             page,
             limit,
             offset
         }
-
+        
         let results = await User.paginate(params)
         users = results.rows
 

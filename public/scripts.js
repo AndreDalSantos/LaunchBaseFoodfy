@@ -232,5 +232,41 @@ const Validate = {
             error,
             value
         }
+    },
+    allFields(e){
+        const items = document.querySelectorAll(' .item input, .item select, .item textarea ')
+        
+        for(item of items){
+            if(item.value === ''){
+                const message = document.createElement('div')
+                message.classList.add('messages')
+                message.classList.add('error')
+                message.style.position = 'fixed'
+                message.innerHTML = 'Todos os campos são obrigatórios.'
+                document.querySelector('body').append(message)
+
+                e.preventDefault()
+            }
+        }
+    },
+    allFieldsEdit(e){
+        const items = document.querySelectorAll(' .item input, .item select, .item textarea ')
+
+        const removedFiles = items.filter(item => item.name === 'removed_files')
+        console.log(removedFiles)
+        
+        for(item of items){
+            if(item.value === '' && item.id != 'photos-input'){
+                // console.log(item)
+                const message = document.createElement('div')
+                message.classList.add('messages')
+                message.classList.add('error')
+                message.style.position = 'fixed'
+                message.innerHTML = 'Todos os campos são obrigatórios.'
+                document.querySelector('body').append(message)
+
+                e.preventDefault()
+            }
+        }
     }
 }

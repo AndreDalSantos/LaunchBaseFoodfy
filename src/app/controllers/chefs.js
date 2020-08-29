@@ -14,7 +14,7 @@ module.exports = {
             if(chefs)
                 return res.render('chefs/index', { chefs, pagination, filter })
             else
-                return res.render('admin/error', { userId: req.session.userId })                
+                return res.render('admin/error', { userId: req.session.userId, message: "Página ou parâmetros inextistentes!" })                
              
         } catch(err){
             throw new Error(err)
@@ -29,12 +29,13 @@ module.exports = {
 
             for(key of keys){
                 if(req.body[key] == ''){
-                    return res.send('Please fill in all fields')
+                    return res.render('admin/error', { userId: req.session.userId, message: "Favor preencher todos os campos." })
                 }
             }
             
-            if(!req.files)
-                return res.send('Please, send one image')
+            if(!req.files.length)
+                return res.render('admin/error', { userId: req.session.userId, message: "Envie pelo menos uma imagem" })
+
             
             const { filename: name, path } = req.files[0]
             
@@ -148,7 +149,7 @@ module.exports = {
 
         for(key of keys){
             if(req.body[key] == '' && key != "removed_files"){
-                return res.send('Please fill in all fields')
+                return res.render('admin/error', { userId: req.session.userId, message: "Favor preencher todos os campos." })
             }
         }
 
@@ -158,11 +159,15 @@ module.exports = {
                 id: req.body.id
             },
             changeFile = false     
-
+        
         if(req.files != 0){
             const { filename: name, path } = req.files[0]            
             newFilesId = await File.create({ name, path })
             changeFile = true
+        }
+
+        if(req.files.length === 0 && req.body.removed_files){
+            return res.render('admin/error', { userId: req.session.userId, message: "Envie pelo menos uma foto." })
         }
 
         if(changeFile){

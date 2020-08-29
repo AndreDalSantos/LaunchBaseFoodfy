@@ -18,7 +18,7 @@ function find(filters, table){
 
 function paginate(params, table){ 
     const { filter, limit, offset } = params
-    
+
     let nameOrTitle = ''
     if(table == 'recipes') nameOrTitle = 'title'
     else nameOrTitle = 'name'

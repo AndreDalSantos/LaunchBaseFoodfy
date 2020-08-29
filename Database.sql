@@ -1,3 +1,6 @@
+DROP DATABASE IF EXISTS launchstoredb;
+CREATE DATABASE launchstoredb;
+
 CREATE TABLE "recipes" (
   "id" SERIAL PRIMARY KEY,
   "chef_id" int,
@@ -119,4 +122,19 @@ ADD CONSTRAINT recipe_files_recipe_id_fkey
 FOREIGN KEY ("recipe_id")
 REFERENCES "recipes" ("id")
 ON DELETE CASCADE;
+
+
+-- to run seeds
+DELETE FROM chefs;
+DELETE FROM recipe_files;
+DELETE FROM files;
+DELETE FROM recipes;
+DELETE FROM users;
+
+-- restart sequence auto-increment from tables ids
+ALTER SEQUENCE chefs_id_seq RESTART WITH 1;
+ALTER SEQUENCE recipe_files_id_seq RESTART WITH 1;
+ALTER SEQUENCE files_id_seq RESTART WITH 1;
+ALTER SEQUENCE recipes_id_seq RESTART WITH 1;
+ALTER SEQUENCE users_id_seq RESTART WITH 1;
 

@@ -21,7 +21,7 @@ module.exports = {
             if(results.recipes)
                 return res.render('admin/index', results)
             else
-                return res.render('admin/error', { userId: req.session.userId })              
+                return res.render('admin/error', { userId: req.session.userId, message: "Página ou parâmetros inexistentes." })              
         } catch(err){
             throw new Error(err)
         }
@@ -44,17 +44,17 @@ module.exports = {
     },
     async post(req, res){
         try {
-            const keys = Object.keys(req.body)
-
-            for(key of keys){
-                if(req.body[key] == ''){
-                    return res.send('Please fill in all fields')
-                }
-            }
-    
-            if(req.files.length == 0)
-                return res.send('Please, send at least one image')   
+            // const keys = Object.keys(req.body)
             
+            // for(key of keys){
+            //     if(req.body[key] == ''){
+            //         return res.render('admin/error', { userId: req.session.userId, message: "Favor preencher todos os parâmetros." }) 
+            //     }
+            // }
+            
+            // if(req.files.length == 0)
+            // return res.render('admin/error', { userId: req.session.userId, message: "Envie pelo menos uma imagem." }) 
+
             const userId = (await Chef.getUserOfChef(req.body.chef)).rows[0].user_id
 
             let { title, chef: chef_id, ingredients, preparation, information } = req.body
@@ -94,7 +94,7 @@ module.exports = {
             if(!isNaN(parseFloat(req.params.id)) && isFinite(req.params.id)) {
                 const recipe = await Recipe.find(req.params.id)
         
-                if(!recipe) return res.render('admin/error', { userId: req.session.userId }) 
+                if(!recipe) return res.render('admin/error', { userId: req.session.userId, message: "Receita não encontrada!" }) 
         
                 results = await Recipe.getChefName(recipe.chef_id)
                 const chef = results.rows[0]
@@ -117,7 +117,7 @@ module.exports = {
                 return res.render('admin/view_recipe', { recipe, chef, files})
             }
             else 
-                return res.render('admin/error', { userId: req.session.userId }) 
+                return res.render('admin/error', { userId: req.session.userId, message: "Página ou parâmetros inexistentes." }) 
         } catch(err){
             throw new Error(err)
         }
@@ -177,7 +177,7 @@ module.exports = {
 
             for(key of keys){
                 if(req.body[key] == '' && key != "removed_files"){
-                    return res.send('Please fill in all fields')
+                    return res.render('admin/error', { userId: req.session.userId, message: "Favor preencher todos os parâmetros." }) 
                 }
             }
 
@@ -186,6 +186,14 @@ module.exports = {
                 const lastIndex = removedFiles.length - 1
                 // removed files -> array de id's dos arquivos removidos
                 removedFiles.splice(lastIndex, 1)
+
+                const oldRecipeFiles = await Recipe.findRecipeFiles(req.body.id)
+                let totalFiles = oldRecipeFiles.rows.length + req.files.length
+                totalFiles = totalFiles - removedFiles.length
+                
+                if(totalFiles === 0) {
+                    return res.render('admin/error', { userId: req.session.userId, message: "Envie pelo menos uma imagem." }) 
+                }
 
                 const removedRecipeFilePromise = removedFiles.map(id => RecipeFile.deleteRecipeFile(id))
                 await Promise.all(removedRecipeFilePromise)

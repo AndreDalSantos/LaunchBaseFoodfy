@@ -22,7 +22,7 @@ module.exports = {
             if(results.recipes)
                 return res.render('visitors/home', results)
             else
-                return res.render('visitors/error', { userId: req.session.userId })                      
+                return res.render('visitors/error', { userId: req.session.userId, message: 'Página ou parâmetros não encontrados.' })                      
 
         } catch(err){
             throw new Error(err)
@@ -40,7 +40,7 @@ module.exports = {
             if(results.recipes)
                 return res.render('visitors/recipes', results)
             else
-                return res.render('visitors/error', { userId: req.session.userId })  
+                return res.render('visitors/error', { userId: req.session.userId, message: 'Página ou parâmetros não encontrados.' })  
 
         } catch(err){
             throw new Error(err)
@@ -53,7 +53,7 @@ module.exports = {
             { 
                 let recipe = await Visitor.find(req.params.id)
     
-                if(!recipe) return res.render('visitors/error', { userId: req.session.userId })
+                if(!recipe) return res.render('visitors/error', { userId: req.session.userId, message: "Receita não encontrada." })
     
                 result = await Visitor.getChefName(recipe.chef_id)
                 let chef = result.rows[0]
@@ -77,7 +77,7 @@ module.exports = {
     
             }
             else {
-                return res.render('visitors/error', { userId: req.session.userId })                
+                return res.render('visitors/error', { userId: req.session.userId, message: "Receita não encontrada." })                
             }
         } catch(err){
             throw new Error(err)
@@ -107,7 +107,7 @@ module.exports = {
                 return res.render('visitors/chefs', { chefs, pagination, filter, userId: req.session.userId })                
             }
             else {
-                return res.render('visitors/error', { userId: req.session.userId })
+                return res.render('visitors/error', { userId: req.session.userId, message: 'Página ou parâmetros não encontrados.' })
             }            
         } catch(err){
             throw new Error(err)

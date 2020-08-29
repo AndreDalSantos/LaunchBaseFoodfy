@@ -7,16 +7,22 @@ const { indexPaginate } = require('../services/services')
 
 async function onlyAdmin(req, res, next){
     let results = await User.checkIfYouAreTheFirstUser()
-
     if(results){
         const userLogged = await User.findOne({
             where: { id: req.session.userId }
         })
-    
+        
         if( !userLogged.is_admin ){
+            let { filter, page, limit } = req.query
 
-            const { users, filter, page, limit, offset } = await indexPaginate(req.query)
-
+            if(!filter || !page || !limit) {
+                filter = ''
+                page = 1
+                limit = 12
+            }
+            
+            const { users } = await indexPaginate({ filter, page, limit })
+            
             if(users[0]){
 
                 const pagination = {
@@ -277,6 +283,7 @@ async function notMe(req, res, next){
 
     if(req.session.userId == req.body.id) {
 
+
         let { filter, page, limit } = req.query
 
             page = page || 1
@@ -316,7 +323,6 @@ async function notMe(req, res, next){
             error: 'Você não pode excluir sua própria conta.'
         })
     }
-
     next()
 }
 

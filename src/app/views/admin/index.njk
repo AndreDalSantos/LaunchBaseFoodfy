@@ -26,8 +26,36 @@
             </div>
         </div>
     </div>
+
+    <section class="cards_admin">
+        {% for recipe in recipes %}
+            <div class="card_admin" id="{{recipe.id}}">
+                <div class="image-container-admin">
+                    <img src="{{recipe.file.src}}" alt="imagem de {{recipe.title}}">
+                </div>
+
+                <div>
+                    <div class="title-container">
+                        <p>{{recipe.title}}</p>
+                    </div>
+
+                    <div class="author-container">
+                        {% for chef in chefs %}
+                            {% if chef.id == recipe.chef_id %}
+                                <p>por {{chef.name}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="link-visualization">
+                        <a href="/admin/recipes/{{recipe.id}}">Visualizar</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
     
-    <section class="cards cards2">
+    {# <section class="cards cards2">
         {% for recipe in recipes %}
             <div class="card" id="{{recipe.id}}">
                 <div class="image-container">
@@ -47,7 +75,7 @@
                 </div>
             </div>
         {% endfor %}
-    </section>
+    </section> #}
 
     <div class="pagination"
         data-page={{pagination.page}}

@@ -19,7 +19,7 @@ module.exports = {
             if(users)
                 return res.render('admin/list', { users, pagination, filter, userId: req.session.userId })
             else
-                return res.render('admin/error', { userId: req.session.userId })
+                return res.render('admin/error', { userId: req.session.userId, message: "Página ou parâmetros inválidos." })
 
         } catch(err){
             console.error(err)
